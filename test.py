@@ -1,2 +1,4 @@
 import unittest
-from projekt import
+from projekt import hello
+
+print(hello)
