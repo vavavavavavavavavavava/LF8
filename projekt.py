@@ -7,7 +7,7 @@ URL = "https://opentdb.com/api.php?amount=10&category=15&type=multiple"
 
 def getQuestions():
     '''Pulls Questions from the Open Trivia DB'''
-    response = requests.get(url)
+    response = requests.get(URL)
 
     if response.status_code == 200:
         data = response.json()  # Parse the JSON response
