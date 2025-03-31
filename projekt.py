@@ -3,7 +3,7 @@ This is a Test
 """
 import requests
 
-url = "https://opentdb.com/api.php?amount=10&category=15&type=multiple"
+URL = "https://opentdb.com/api.php?amount=10&category=15&type=multiple"
 
 def getQuestions():
     '''Pulls Questions from the Open Trivia DB'''
@@ -19,6 +19,6 @@ def getQuestions():
             print(f"Correct Answer: {question['correct_answer']}")
             print('-' * 50)
     else:
-        print("Error fetching questions") 
+        print("Error fetching questions")
 
 getQuestions()
