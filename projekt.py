@@ -1,9 +1,9 @@
 """
-This is a sample module.
+This is a Test
 """
 
+# Prints Hello World
 def hello():
-    """Prints 'Hello World' to the console."""
     print("Hello World")
 
 hello()
