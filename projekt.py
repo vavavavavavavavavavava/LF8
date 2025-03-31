@@ -22,4 +22,3 @@ def getQuestions():
         print("Error fetching questions")
 
 getQuestions()
-'''macos hi'''
