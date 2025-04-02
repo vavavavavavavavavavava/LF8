@@ -1,22 +1,7 @@
 import tkinter as tk
-from PIL import ImageTk  # Install Pillow if not already installed: pip install pillow
+from PIL import ImageTk, Image  # Importieren von Image für das Laden des Logos
 import getData
 import random
-
-# Funktion zum Laden und Anzeigen eines neuen Bildes
-def load_black_image(pokedexNR):
-    img = getData.get_black_image(pokedexNR)
-    img = ImageTk.PhotoImage(img)  # PIL.Image zu PhotoImage konvertieren
-    img_label.config(image=img)
-    img_label.image = img  # Referenz behalten
-    img_label.pack(pady=10)
-
-def load_original_image(pokedexNR):
-    img = getData.get_pokemon_image(pokedexNR)
-    img = ImageTk.PhotoImage(img)  # PIL.Image zu PhotoImage konvertieren
-    img_label.config(image=img)
-    img_label.image = img  # Referenz behalten
-    img_label.pack(pady=10)
 
 def load_image(img):
     img = ImageTk.PhotoImage(img)  # PIL.Image zu PhotoImage konvertieren
@@ -32,28 +17,19 @@ def random_exclude(pokedexNR):
         return getData.get_pokemon_name(x)
 
 def prepare_questionData(pokedexNr):
-    #original_image = load_original_image(pokedexNr)
     original_image = getData.get_pokemon_image(pokedexNr)
-    #black_image = load_black_image(pokedexNr)
     black_image = getData.get_black_image(pokedexNr)
     correct_answer = getData.get_pokemon_name(pokedexNr)
-    choices = [random_exclude(pokedexNr),random_exclude(pokedexNr),random_exclude(pokedexNr),correct_answer]
+    choices = [random_exclude(pokedexNr), random_exclude(pokedexNr), random_exclude(pokedexNr), correct_answer]
     random.shuffle(choices)
     return correct_answer, choices, black_image, original_image
-    
 
 def question(pokedexNR):
-
-    correct_answer,  choices, black_image, original_image = prepare_questionData(pokedexNR)
+    correct_answer, choices, black_image, original_image = prepare_questionData(pokedexNR)
     # Anfangsbild und Frage anzeigen
-    #load_black_image(pokedexNR)  # Anfangsbild, ersetze mit deinem Bildpfad
     load_image(black_image)
-    question_label.config(text="Welches Pokémon ist das?")
-    question_label.pack()
-
-    # Mögliche Antworten
-    #correct_answer = getData.get_pokemon_name(pokedexNR)
-    #choices = [random_exclude(pokedexNR),random_exclude(pokedexNR),random_exclude(pokedexNR), correct_answer]
+    #question_label.config(text="Welches Pokémon ist das?")
+    #question_label.pack()
 
     # Funktion zur Überprüfung der Antwort
     def check_answer(choice, button):
@@ -71,7 +47,6 @@ def question(pokedexNR):
             if btn.cget("text") == correct_answer:
                 btn.config(bg="green")
 
-        #load_original_image(pokedexNR)
         load_image(original_image)
 
         # Weiter-Button anzeigen
@@ -81,7 +56,7 @@ def question(pokedexNR):
     def next_question():
         # Weiter-Button ausblenden und neue Frage laden
         next_button.pack_forget()
-        question(random.randint(1,151))  # Nächste Frage, ersetze mit der nächsten Bildnummer
+        question(random.randint(1, 151))  # Nächste Frage, ersetze mit der nächsten Bildnummer
         # Antwortknöpfe zurücksetzen
         for btn in answer_buttons:
             btn.config(state="normal", bg="SystemButtonFace")
@@ -99,9 +74,7 @@ def start_game():
     # Start- und Exit-Buttons ausblenden
     start_button.pack_forget()
     exit_button.pack_forget()
-    question(random.randint(1,151))
-
-
+    question(random.randint(1, 151))
 
 # Funktion zum Beenden des Spiels
 def exit_game():
@@ -109,8 +82,19 @@ def exit_game():
 
 # Hauptfenster erstellen
 root = tk.Tk()
-root.title("Quiz Spiel")
-root.geometry("800x800")
+root.title("Who's that Pokemon?")
+
+root.state('zoomed')
+
+# Logo laden und anzeigen
+logo_img = Image.open("logo.png")  # Dein Logo hier
+logo_img = logo_img.resize((265, 197))  # Größe des Logos anpassen
+logo_photo = ImageTk.PhotoImage(logo_img)
+
+# Logo-Label erstellen und packen
+logo_label = tk.Label(root, image=logo_photo)
+logo_label.image = logo_photo  # Referenz zum Bild behalten
+logo_label.pack(pady=20)  # Abstand zum Rest der UI
 
 # UI-Elemente erstellen
 start_button = tk.Button(root, text="Spiel Starten", command=start_game, width=15, height=2)
