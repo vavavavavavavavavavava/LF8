@@ -7,7 +7,7 @@ import tkinter as tk
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'passwort',
+    'password': 'root',
     'database': 'pokemon_db'
 }
 
@@ -31,7 +31,11 @@ def get_pokemon_name(pokedex_number):
     cursor.execute('SELECT name FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
     result = cursor.fetchone()
     conn.close()
-    return result['name'] if result else None
+    # Falls ein Ergebnis gefunden wurde, den ersten Buchstaben groß machen
+    if result:
+        return result['name'].capitalize()
+    else:
+        return None
 
 # Funktion, um das Originalbild eines Pokémon als PIL-Image zu erhalten
 def get_pokemon_image(pokedex_number):
@@ -91,4 +95,4 @@ def test_display_image():
     image = get_pokemon_image(pokedex_number)
     display_pokemon_image(image)
 
-test_display_image()
+#test_display_image()

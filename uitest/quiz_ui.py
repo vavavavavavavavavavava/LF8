@@ -9,7 +9,7 @@ class QuizInterface:
     def __init__(self, quiz_brain: QuizBrain) -> None:
         self.quiz = quiz_brain
         self.window = Tk()
-        self.window.title("iQuiz App")
+        self.window.title("Who's that Pokemon?")
         self.window.geometry("850x530")
 
         # Display Title
@@ -48,7 +48,7 @@ class QuizInterface:
         """To display title"""
 
         # Title
-        title = Label(self.window, text="iQuiz Application",
+        title = Label(self.window, text="Who's that Pokemon?",
                       width=50, bg="green", fg="white", font=("ariel", 20, "bold"))
 
         # place of the title
