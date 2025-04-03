@@ -2,7 +2,6 @@ import mysql.connector
 from io import BytesIO
 from PIL import Image, ImageTk
 import tkinter as tk
-import bcrypt
 
 # MySQL-Verbindungsdaten
 db_config = {
@@ -96,29 +95,17 @@ def test_display_image():
     image = get_pokemon_image(pokedex_number)
     display_pokemon_image(image)
 
-def hash_password(password):
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-def create_user(name,password):
+def set_highscore(name, score):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    hashed_password = hash_password(password)
-    sql = "INSERT INTO user (name, password) VALUES (%s, %s)"
-    values = (name, hashed_password)
-    cursor.execute(sql, values)
+    cursor.execute('INSERT INTO highscores (name, score) VALUES (%s, %s)', (name, score))
     conn.commit()
     conn.close()
 
-def check_password(name, password):
+def get_highscore():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT password FROM user WHERE name = %s', (name,))
-    result = cursor.fetchone()
+    cursor.execute('SELECT name, score FROM highscores ORDER BY score DESC LIMIT 10')
+    result = cursor.fetchall()
     conn.close()
-
-    # Überprüfen des Passworts mit bcrypt.checkpw
-    if result and bcrypt.checkpw(password.encode('utf-8'), result['password'].encode('utf-8')):
-        return True
-    else:
-        return False
-    
+    return result
