@@ -11,4 +11,4 @@ game = PokemonGame()
 game_ui = PokemonGameUI(root, game)
 
 # Tkinter-Schleife ausführen
-root.mainloop()
+root.mainloop() 

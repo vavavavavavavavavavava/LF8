@@ -84,6 +84,7 @@ class PokemonGameUI:
             self.update_scoreboard()
         else:
             button.config(bg="red", fg="black")  # Falsche Antwort wird rot
+            self.game.wrong_answer()
 
         # Sicherstellen, dass der richtige Antwort-Knopf grün wird
         for btn in self.answer_buttons:
@@ -92,9 +93,6 @@ class PokemonGameUI:
 
         # Das Originalbild anzeigen
         self.load_image(self.game.get_original_image())
-
-        # Counter erhöhen
-        self.game.increase_counter()
 
         # Weiter-Button anzeigen
         self.next_button.grid(row=5, column=1, pady=20)
@@ -108,8 +106,10 @@ class PokemonGameUI:
             btn.config(state="normal", bg="SystemButtonFace")
             btn.grid_forget()
 
-        if self.game.get_counter() >= 3:
+        if self.game.get_correct() == False:
             self.go_to_main_menu()
+            self.game.reset_score()
+            self.update_scoreboard()
         else:
             self.ask_question(random.randint(1, 1025))
 
@@ -124,7 +124,7 @@ class PokemonGameUI:
         self.show_main_menu()
 
         # Zähler zurücksetzen
-        self.game.reset_counter()
+        self.game.reset_correct()
 
     def ask_question(self, pokedexNR):
         self.game.prepare_question_data(pokedexNR)
