@@ -8,7 +8,7 @@ import os
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'passwort',
+    'password': 'root',
     'database': 'pokemon_db'
 }
 
@@ -29,7 +29,7 @@ def convert_to_black(image):
     return image
 
 # Die Basis-URL der PokeAPI
-url = "https://pokeapi.co/api/v2/pokemon?limit=151"  # limit gibt an, wie viele Pokémon du auf einmal bekommst
+url = "https://pokeapi.co/api/v2/pokemon?limit=1025"  # limit gibt an, wie viele Pokémon du auf einmal bekommst
 
 # Ordner zum Speichern der Bilder erstellen (optional)
 save_folder = 'pokemon_sprites'
