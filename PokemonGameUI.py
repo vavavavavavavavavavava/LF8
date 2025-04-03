@@ -51,12 +51,14 @@ class PokemonGameUI:
         self.img_label.pack(pady=10)
 
     def check_answer(self, choice, button):
-        # Alle Antwort-Buttons deaktivieren
+    # Alle Antwort-Buttons deaktivieren
         for btn in self.answer_buttons:
             btn.config(state="disabled")  # Deaktiviert alle Knöpfe
 
         if choice == self.game.get_correct_answer():
             button.config(bg="green")  # Richtige Antwort wird grün
+            self.game.increase_score()
+            print(self.game.get_score())
         else:
             button.config(bg="red")  # Falsche Antwort wird rot
 
@@ -68,16 +70,34 @@ class PokemonGameUI:
         # Das Originalbild anzeigen
         self.load_image(self.game.get_original_image())
 
-        # Weiter-Button anzeigen
+        # Counter erhöhen
+        self.game.increase_counter()
+        print(f"Counter: {self.game.get_counter()}")  # Zum Debuggen anzeigen, wie der Counter steigt
+
         self.next_button.pack(pady=20)
 
     def next_question(self):
         # Weiter-Button ausblenden und neue Frage laden
         self.next_button.pack_forget()
-        self.ask_question(random.randint(1, 151))  # Nächste Frage, ersetze mit der nächsten Bildnummer
+        self.ask_question(random.randint(1, 1025)) # Nächste Frage, ersetze mit der nächsten Bildnummer
         # Antwortknöpfe zurücksetzen
         for btn in self.answer_buttons:
             btn.config(state="normal", bg="SystemButtonFace")
+
+    def go_to_main_menu(self):
+        # Alle UI-Elemente, die zur Frage gehören, ausblenden
+        self.img_label.pack_forget()  # Bild ausblenden
+        self.question_label.config(text="")  # Frage zurücksetzen
+        for btn in self.answer_buttons:
+            btn.pack_forget()  # Alle Antwort-Buttons ausblenden
+        self.next_button.pack_forget()  # Weiter-Button ausblenden
+
+        # Start- und Exit-Buttons wieder anzeigen
+        self.start_button.pack(pady=20)
+        self.exit_button.pack()
+
+        # Zähler zurücksetzen
+        self.game.reset_counter()
 
     def ask_question(self, pokedexNR):
         self.game.prepare_question_data(pokedexNR)
@@ -89,14 +109,17 @@ class PokemonGameUI:
             self.answer_buttons[i].config(text=choice, command=lambda c=choice, b=self.answer_buttons[i]: self.check_answer(c, b))
             self.answer_buttons[i].pack(pady=5)
 
+        if self.game.get_counter() >=3:
+            self.go_to_main_menu()
+        else:
         # Weiter-Button erstellen (wird sichtbar, wenn eine Antwort ausgewählt wurde)
-        self.next_button = tk.Button(self.root, text="Weiter", command=self.next_question, width=15, height=2)
+            self.next_button = tk.Button(self.root, text="Weiter", command=self.next_question, width=15, height=2)
 
     def start_game(self):
         # Start- und Exit-Buttons ausblenden
         self.start_button.pack_forget()
         self.exit_button.pack_forget()
-        self.ask_question(random.randint(1, 151))
+        self.ask_question(random.randint(1, 1025))
 
     def exit_game(self):
         self.root.destroy()  # Fenster schließen

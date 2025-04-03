@@ -8,9 +8,11 @@ class PokemonGame:
         self.choices = None
         self.black_image = None
         self.original_image = None
+        self.score = 0
+        self.counter = 0
 
     def random_exclude(self, pokedexNR):
-        x = random.randint(1, 151)
+        x = random.randint(1, 1025)
         if x == pokedexNR:
             return self.random_exclude(pokedexNR)
         else:
@@ -35,3 +37,21 @@ class PokemonGame:
 
     def get_original_image(self):
         return self.original_image
+    
+    def reset_score(self):
+        self.score = 0
+
+    def increase_score(self):
+        self.score += 1
+
+    def get_score(self):
+        return self.score
+
+    def reset_counter(self):
+        self.counter = 0
+
+    def increase_counter(self):
+        self.counter += 1
+    
+    def get_counter(self):
+        return self.counter
