@@ -10,12 +10,6 @@ CREATE TABLE pokemon (
     black_image LONGBLOB
 );
 
-CREATE TABLE user (
-    user_ID INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
-)
-
 CREATE TABLE highscores (
     name VARCHAR(255) NOT NULL,
     score INT NOT NULL
