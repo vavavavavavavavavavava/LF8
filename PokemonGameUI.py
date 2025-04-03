@@ -19,6 +19,7 @@ class PokemonGameUI:
         self.question_label = None
         self.next_button = None
         self.scoreboard_placeholder = None
+        self.submit_button = None
 
         self.prepare_ui()
 
@@ -74,28 +75,28 @@ class PokemonGameUI:
         self.img_label.grid(row=0, column=1, pady=10)  # Display image in the center column
 
     def check_answer(self, choice, button):
-        # Alle Antwort-Buttons deaktivieren
-        for btn in self.answer_buttons:
-            btn.config(state="disabled", disabledforeground="black")
+            # Alle Antwort-Buttons deaktivieren
+            for btn in self.answer_buttons:
+                btn.config(state="disabled", disabledforeground="black")
 
-        if choice == self.game.get_correct_answer():
-            button.config(bg="green", fg="black")  # Richtige Antwort wird grün
-            self.game.increase_score()
-            self.update_scoreboard()
-        else:
-            button.config(bg="red", fg="black")  # Falsche Antwort wird rot
-            self.game.wrong_answer()
+            if choice == self.game.get_correct_answer():
+                button.config(bg="green", fg="black")  # Richtige Antwort wird grün
+                self.game.increase_score()
+                self.update_scoreboard()
+            else:
+                button.config(bg="red", fg="black")  # Falsche Antwort wird rot
+                self.game.wrong_answer()
 
-        # Sicherstellen, dass der richtige Antwort-Knopf grün wird
-        for btn in self.answer_buttons:
-            if btn.cget("text") == self.game.get_correct_answer():
-                btn.config(bg="green", fg="black")
+            # Sicherstellen, dass der richtige Antwort-Knopf grün wird
+            for btn in self.answer_buttons:
+                if btn.cget("text") == self.game.get_correct_answer():
+                    btn.config(bg="green", fg="black")
 
-        # Das Originalbild anzeigen
-        self.load_image(self.game.get_original_image())
+            # Das Originalbild anzeigen
+            self.load_image(self.game.get_original_image())
 
-        # Weiter-Button anzeigen
-        self.next_button.grid(row=5, column=1, pady=20)
+            # Weiter-Button anzeigen
+            self.next_button.grid(row=5, column=1, pady=20)
 
     def next_question(self):
         # Weiter-Button ausblenden
@@ -107,18 +108,13 @@ class PokemonGameUI:
             btn.grid_forget()
 
         if self.game.get_correct() == False:
-            self.go_to_main_menu()
-            self.game.reset_score()
-            self.update_scoreboard()
+            self.end_game()
         else:
             self.ask_question(random.randint(1, 1025))
-
     def go_to_main_menu(self):
-        # Alle UI-Elemente ausblenden
-        self.img_label.grid_forget()
-        for btn in self.answer_buttons:
-            btn.grid_forget()
-        self.next_button.grid_forget()
+        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
+        for widget in self.root.winfo_children():
+            widget.grid_forget()
 
         # Hauptmenü anzeigen
         self.show_main_menu()
@@ -151,6 +147,44 @@ class PokemonGameUI:
 
         # Erste Frage stellen
         self.ask_question(random.randint(1, 1025))
+
+    def end_game(self):
+        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
+        for widget in self.root.winfo_children():
+            widget.grid_forget()
+
+        # Logo zurück an die Spitze der mittleren Spalte (Column 1)
+        self.logo_label.grid(row=0, column=1, pady=20)
+
+        # Score anzeigen
+        self.score_label = tk.Label(self.root, text=f"Your Score: {self.game.get_score()}", font=("Arial", 24, "bold"))
+        self.score_label.grid(row=1, column=1, pady=10)
+
+        # Eingabefeld und Beschriftung für den Namen anzeigen
+        self.name_label = tk.Label(self.root, text="Enter your name:", font=("Arial", 14))
+        self.name_label.grid(row=2, column=1, pady=20)
+        self.name_entry = tk.Entry(self.root, font=("Arial", 14))
+        self.name_entry.grid(row=3, column=1, pady=20)
+
+        # Submit-Button erstellen
+        self.submit_button = tk.Button(self.root, text="Submit", command=self.submit_name_and_go_to_menu, font=("Arial", 14))
+        self.submit_button.grid(row=4, column=1, pady=20)
+
+        # Enter-Taste für die Eingabe binden
+        self.root.bind('<Return>', lambda event: self.submit_name_and_go_to_menu())
+
+        # Zähler zurücksetzen
+        self.game.reset_correct()
+
+    def submit_name_and_go_to_menu(self):
+        # Name aus dem Eingabefeld holen
+        player_name = self.name_entry.get()
+        print(f"Player Name Submitted: {player_name}")  # Print the name to the console for testing
+        self.game.reset_score()
+        self.update_scoreboard()
+        # Zurück zum Hauptmenü
+        self.go_to_main_menu()
+
 
     def exit_game(self):
         self.root.destroy()

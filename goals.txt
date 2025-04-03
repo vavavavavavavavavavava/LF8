@@ -1,6 +1,12 @@
 👍Hauptmenu mit paar Buttons
 
-"Frage Schwarzem bild" und "👍mehreren antwortmöglichkeiten"
-Auflösung mit richtigem bild
+👍"Frage Schwarzem bild" und "👍mehreren antwortmöglichkeiten"
+👍Auflösung mit richtigem bild
 
-nächste frage
+👍nächste frage
+
+userscore speichern
+
+scoreboard
+
+kommentare anpassen
