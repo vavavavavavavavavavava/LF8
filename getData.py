@@ -2,12 +2,13 @@ import mysql.connector
 from io import BytesIO
 from PIL import Image, ImageTk
 import tkinter as tk
+import bcrypt
 
 # MySQL-Verbindungsdaten
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'root',
+    'password': 'passwort',
     'database': 'pokemon_db'
 }
 
@@ -95,4 +96,29 @@ def test_display_image():
     image = get_pokemon_image(pokedex_number)
     display_pokemon_image(image)
 
-#test_display_image()
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+def create_user(name,password):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    hashed_password = hash_password(password)
+    sql = "INSERT INTO user (name, password) VALUES (%s, %s)"
+    values = (name, hashed_password)
+    cursor.execute(sql, values)
+    conn.commit()
+    conn.close()
+
+def check_password(name, password):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT password FROM user WHERE name = %s', (name,))
+    result = cursor.fetchone()
+    conn.close()
+
+    # Überprüfen des Passworts mit bcrypt.checkpw
+    if result and bcrypt.checkpw(password.encode('utf-8'), result['password'].encode('utf-8')):
+        return True
+    else:
+        return False
+    
