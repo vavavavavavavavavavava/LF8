@@ -19,6 +19,7 @@ class PokemonGameUI:
         self.exit_button = None
         self.question_label = None
         self.next_button = None
+        self.scoreboard_placeholder = None
 
         self.prepare_ui()
 
@@ -28,10 +29,9 @@ class PokemonGameUI:
         logo_img = logo_img.resize((265, 197))  # Größe des Logos anpassen
         logo_photo = ImageTk.PhotoImage(logo_img)
 
-        # Logo-Label erstellen und packen
+        # Logo-Label erstellen
         self.logo_label = tk.Label(self.root, image=logo_photo)
         self.logo_label.image = logo_photo  # Referenz zum Bild behalten
-        self.logo_label.pack(pady=20)  # Abstand zum Rest der UI
 
         # UI-Elemente erstellen
         self.start_button = tk.Button(self.root, text="Spiel Starten", command=self.start_game, width=15, height=2)
@@ -39,10 +39,13 @@ class PokemonGameUI:
         self.img_label = tk.Label(self.root)  # Bildplatzhalter
         self.question_label = tk.Label(self.root, text="")  # Frage-Platzhalter
         self.answer_buttons = [tk.Button(self.root, text="", width=15, height=2) for _ in range(4)]  # Antwortknöpfe
+        self.scoreboard_placeholder = tk.Label(self.root, text="Scoreboard Placeholder", font=("Arial", 14))
 
         # Anfangs-Buttons platzieren
+        self.logo_label.pack(pady=20)
         self.start_button.pack(pady=20)
-        self.exit_button.pack()
+        self.exit_button.pack(pady=5)
+        self.scoreboard_placeholder.pack(pady=20)  # Scoreboard unter den Buttons platzieren (splash screen)
 
     def load_image(self, img):
         img = ImageTk.PhotoImage(img)  # PIL.Image zu PhotoImage konvertieren
@@ -53,19 +56,19 @@ class PokemonGameUI:
     def check_answer(self, choice, button):
     # Alle Antwort-Buttons deaktivieren
         for btn in self.answer_buttons:
-            btn.config(state="disabled")  # Deaktiviert alle Knöpfe
+            btn.config(state="disabled", disabledforeground="black")  # Deaktiviert alle Knöpfe
 
         if choice == self.game.get_correct_answer():
-            button.config(bg="green")  # Richtige Antwort wird grün
+            button.config(bg="green", fg="black")  # Richtige Antwort wird grün
             self.game.increase_score()
             print(self.game.get_score())
         else:
-            button.config(bg="red")  # Falsche Antwort wird rot
+            button.config(bg="red", fg="black")  # Falsche Antwort wird rot
 
         # Sicherstellen, dass der richtige Antwort-Knopf grün wird
         for btn in self.answer_buttons:
             if btn.cget("text") == self.game.get_correct_answer():
-                btn.config(bg="green")
+                btn.config(bg="green", fg="black")
 
         # Das Originalbild anzeigen
         self.load_image(self.game.get_original_image())
@@ -119,6 +122,15 @@ class PokemonGameUI:
         # Start- und Exit-Buttons ausblenden
         self.start_button.pack_forget()
         self.exit_button.pack_forget()
+
+        # Layout anpassen
+        self.logo_label.pack_forget()
+        self.logo_label.pack(side="left", padx=20, pady=20)
+
+        # Scoreboard on the right side during the game
+        self.scoreboard_placeholder.pack(side="right", padx=20, pady=20)
+
+        # Ask the first question
         self.ask_question(random.randint(1, 1025))
 
     def exit_game(self):
