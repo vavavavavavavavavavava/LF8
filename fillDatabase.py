@@ -1,23 +1,42 @@
 import requests
 import mysql.connector
-from PIL import Image, ImageTk
+from PIL import Image
 import io
-import os
+import time  # Import für den Timer
+from concurrent.futures import ThreadPoolExecutor
 
 # MySQL-Verbindungsdaten
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'root',
+    'password': 'passwort',
     'database': 'pokemon_db'
 }
 
-# Verbindung zur MySQL-Datenbank herstellen
-conn = mysql.connector.connect(**db_config)
-cursor = conn.cursor()
+def connect_to_database():
+    """Stellt die Verbindung zur MySQL-Datenbank her."""
+    return mysql.connector.connect(**db_config)
 
-# Funktion, um das Bild zu schwarz zu konvertieren
+def fetch_pokemon_data(api_url):
+    """Sendet eine Anfrage an die PokeAPI und gibt die Daten zurück."""
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("Fehler bei der Anfrage zur PokeAPI")
+        return None
+
+def fetch_pokemon_details(pokemon_url):
+    """Holt die Detaildaten eines Pokémon von der PokeAPI."""
+    response = requests.get(pokemon_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Fehler beim Abrufen der Details von {pokemon_url}")
+        return None
+
 def convert_to_black(image):
+    """Konvertiert ein Bild zu einer schwarzen Version."""
     image = image.convert('RGBA')
     pixels = image.load()
     width, height = image.size
@@ -28,70 +47,74 @@ def convert_to_black(image):
                 pixels[x, y] = (0, 0, 0, 255)  # Setze den Pixel auf schwarz
     return image
 
-# Die Basis-URL der PokeAPI
-url = "https://pokeapi.co/api/v2/pokemon?limit=1025"  # limit gibt an, wie viele Pokémon du auf einmal bekommst
+def save_pokemon_batch_to_database(cursor, pokemon_data):
+    """Speichert mehrere Pokémon-Daten in der MySQL-Datenbank."""
+    sql = '''
+    INSERT IGNORE INTO pokemon (pokedex_number, name, original_image, black_image)
+    VALUES (%s, %s, %s, %s)
+    '''
+    cursor.executemany(sql, pokemon_data)
 
-# Ordner zum Speichern der Bilder erstellen (optional)
-save_folder = 'pokemon_sprites'
-os.makedirs(save_folder, exist_ok=True)
-
-# Die Anfrage an die PokeAPI senden
-response = requests.get(url)
-
-# Überprüfen, ob die Anfrage erfolgreich war
-if response.status_code == 200:
-    data = response.json()  # Antwort in ein Python-Dictionary umwandeln
+def fetch_and_process_pokemon(pokemon, cursor):
+    """Holt und verarbeitet die Daten eines einzelnen Pokémon."""
+    pokemon_details = fetch_pokemon_details(pokemon['url'])
+    if not pokemon_details:
+        return None
     
-    # Für jedes Pokémon die Daten herunterladen und speichern
-    for pokemon in data['results']:
-        pokemon_url = pokemon['url']
-        
-        # Detailanfrage für das Pokémon senden
-        pokemon_details = requests.get(pokemon_url).json()
-        
-        # Pokémon-Name und Pokédex-Nr
-        pokemon_name = pokemon_details['name']
-        pokemon_id = pokemon_details['id']
-        
-        # Das Front-Artwork des Pokémon
-        front_sprite_url = pokemon_details['sprites']['other']['official-artwork']['front_default']
-        
-        if front_sprite_url:
-            # Originalbild herunterladen
-            img_response = requests.get(front_sprite_url)
+    pokemon_name = pokemon_details['name']
+    pokemon_id = pokemon_details['id']
+    front_sprite_url = pokemon_details['sprites']['other']['official-artwork']['front_default']
+    
+    if front_sprite_url:
+        img_response = requests.get(front_sprite_url)
+        if img_response.status_code == 200:
+            original_image = Image.open(io.BytesIO(img_response.content))
             
-            if img_response.status_code == 200:
-                original_image = Image.open(io.BytesIO(img_response.content))
-                
-                # Bild zu schwarz konvertieren
-                black_image = convert_to_black(original_image)
-                
-                # Das originale Bild und das konvertierte Bild als BLOB speichern
-                original_image_blob = io.BytesIO()
-                original_image.save(original_image_blob, format='PNG')
-                original_image_blob.seek(0)  # Setze den Pointer zurück
-                
-                black_image_blob = io.BytesIO()
-                black_image.save(black_image_blob, format='PNG')
-                black_image_blob.seek(0)
-                
-                # Pokémon-Daten in die MySQL-Datenbank speichern (Insert Ignore um Duplikate zu vermeiden)
-                cursor.execute('''
-                INSERT IGNORE INTO pokemon (pokedex_number, name, original_image, black_image)
-                VALUES (%s, %s, %s, %s)
-                ''', (pokemon_id, pokemon_name, original_image_blob.read(), black_image_blob.read()))
-                
-                # Speichern der Änderungen in der Datenbank
-                conn.commit()
-                
-                print(f"Gespeichert: {pokemon_name} ({pokemon_id})")
-            else:
-                print(f"Fehler beim Herunterladen des Sprites für {pokemon_name}")
-        else:
-            print(f"Kein Front-Sprite für {pokemon_name}")
+            # Originalbild als BLOB speichern
+            original_image_blob = io.BytesIO()
+            original_image.save(original_image_blob, format='PNG')
+            original_image_blob.seek(0)
+            
+            # Schwarzes Bild erstellen und als BLOB speichern
+            black_image = convert_to_black(original_image)
+            black_image_blob = io.BytesIO()
+            black_image.save(black_image_blob, format='PNG')
+            black_image_blob.seek(0)
+            
+            return (pokemon_id, pokemon_name, original_image_blob.read(), black_image_blob.read())
+    return None
 
-else:
-    print("Fehler bei der Anfrage zur PokeAPI")
+def process_pokemon_data_parallel(data, cursor):
+    """Verarbeitet die Pokémon-Daten parallel und speichert sie in der Datenbank."""
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        pokemon_batch = list(executor.map(lambda p: fetch_and_process_pokemon(p, cursor), data['results']))
+    
+    # Filtere None-Werte heraus
+    pokemon_batch = [p for p in pokemon_batch if p]
+    
+    # Batch-Insert in die Datenbank
+    save_pokemon_batch_to_database(cursor, pokemon_batch)
+    print(f"{len(pokemon_batch)} Pokémon-Datensätze gespeichert.")
 
-# Verbindung zur Datenbank schließen
-conn.close()
+def main():
+    """Hauptfunktion des Programms."""
+    start_time = time.time()  # Startzeit erfassen
+    
+    conn = connect_to_database()
+    cursor = conn.cursor()
+    
+    api_url = "https://pokeapi.co/api/v2/pokemon?limit=1025"
+    data = fetch_pokemon_data(api_url)
+    
+    if data:
+        process_pokemon_data_parallel(data, cursor)
+        conn.commit()
+    
+    conn.close()
+    
+    end_time = time.time()  # Endzeit erfassen
+    elapsed_time = end_time - start_time
+    print(f"Datenbankbefüllung abgeschlossen. Dauer: {elapsed_time:.2f} Sekunden")
+
+if __name__ == "__main__":
+    main()
