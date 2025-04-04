@@ -7,7 +7,7 @@ import tkinter as tk
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'passwort',
+    'password': 'root',
     'database': 'pokemon_db'
 }
 
@@ -109,3 +109,10 @@ def get_highscore():
     result = cursor.fetchall()
     conn.close()
     return result
+
+
+#set_highscore("Vahan", 10)
+#set_highscore("Jonah", 13)
+#set_highscore("Max", 7)
+#set_highscore("Peter", 3)
+#set_highscore("Julia", 17)

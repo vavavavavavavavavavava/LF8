@@ -18,8 +18,10 @@ class PokemonGameUI:
         self.exit_button = None
         self.question_label = None
         self.next_button = None
-        self.scoreboard_placeholder = None
+        self.scoreboard_data = None
+        self.scoreboard_button = None
         self.submit_button = None
+        self.menu_button = None
 
         self.prepare_ui()
 
@@ -41,11 +43,13 @@ class PokemonGameUI:
 
         # UI-Elemente erstellen
         self.start_button = tk.Button(self.root, text="Spiel Starten", command=self.start_game, width=15, height=2)
+        self.scoreboard_button = tk.Button(self.root, text="Scoreboard", command=self.scoreboard, width=15, height=2)
         self.exit_button = tk.Button(self.root, text="Beenden", command=self.exit_game, width=15, height=2)
         self.img_label = tk.Label(self.root)  # Bildplatzhalter
         self.question_label = tk.Label(self.root, text="")  # Frage-Platzhalter
         self.answer_buttons = [tk.Button(self.root, text="", width=15, height=2) for _ in range(4)]  # Antwortknöpfe
-        self.scoreboard_placeholder = tk.Label(self.root, text=f"Score: {self.game.get_score()}", font=("Arial", 14))
+        self.scoreboard_data = tk.Label(self.root, text=f"Score: {self.game.get_score()}", font=("Arial", 14))
+        #self.scoreboard_databank = 
         self.next_button = tk.Button(self.root, text="Weiter", command=self.next_question, width=15, height=2)
 
         # Hauptmenü anzeigen
@@ -58,15 +62,16 @@ class PokemonGameUI:
 
         # UI-Elemente für das Hauptmenü in der mittleren Spalte unter dem Logo anzeigen
         self.start_button.grid(row=1, column=1, pady=20, sticky="nsew")
-        self.exit_button.grid(row=2, column=1, pady=5, sticky="nsew")
+        self.scoreboard_button.grid(row=2, column=1, pady=20, sticky="nsew")
+        self.exit_button.grid(row=3, column=1, pady=20, sticky="nsew")
 
         # Das Scoreboard ausblenden, wenn das Hauptmenü angezeigt wird
-        self.scoreboard_placeholder.grid_forget()
+        self.scoreboard_data.grid_forget()
         self.next_button.grid_forget()
 
     def update_scoreboard(self):
         """Aktualisiere den Score im Scoreboard."""
-        self.scoreboard_placeholder.config(text=f"Score: {self.game.get_score()}")
+        self.scoreboard_data.config(text=f"Score: {self.game.get_score()}")
 
     def load_image(self, img):
         img = ImageTk.PhotoImage(img)  # PIL.Image zu PhotoImage konvertieren
@@ -137,16 +142,40 @@ class PokemonGameUI:
     def start_game(self):
         # Start- und Exit-Buttons ausblenden
         self.start_button.grid_forget()
+        self.scoreboard_button.grid_forget()
         self.exit_button.grid_forget()
 
         # Logo in der linken Spalte anzeigen
         self.logo_label.grid(row=0, column=0, pady=20, padx=20)
 
         # Scoreboard in der rechten Spalte anzeigen
-        self.scoreboard_placeholder.grid(row=0, column=2, pady=20, padx=20)
+        self.scoreboard_data.grid(row=0, column=2, pady=20, padx=20)
 
         # Erste Frage stellen
         self.ask_question(random.randint(1, 1025))
+
+    def scoreboard(self):
+        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
+        for widget in self.root.winfo_children():
+            widget.grid_forget()
+
+        # Logo in der mittleren Spalte anzeigen
+        self.logo_label.grid(row=0, column=1, pady=20)
+
+        # Scoreboard anzeigen
+        self.scoreboard_data.grid(row=1, column=1, pady=10) 
+
+        ## Zurück-Button erstellen
+        self.menu_button = tk.Button(self.root, text="Zurück", command=self.go_to_main_menu, font=("Arial", 14))
+        self.menu_button.grid(row=2, column=1, pady=20)
+
+        # Highscores aus der Datenbank abrufen und anzeigen
+        highscores = self.game.get_highscores()
+        for i, entry in enumerate(highscores):
+            name, score = entry['name'], entry['score']
+            tk.Label(self.root, text=f"{i+1}. {name}: {score}", font=("Arial", 14)).grid(row=i+3, column=1, pady=5)
+
+        
 
     def end_game(self):
         # Alle Widgets aus dem Fenster entfernen (Clean Slate)
@@ -179,7 +208,7 @@ class PokemonGameUI:
     def submit_name_and_go_to_menu(self):
         # Name aus dem Eingabefeld holen
         player_name = self.name_entry.get()
-        print(f"Player Name Submitted: {player_name}")  # Print the name to the console for testing
+        self.game.submit_highscore(player_name)
         self.game.reset_score()
         self.update_scoreboard()
         # Zurück zum Hauptmenü

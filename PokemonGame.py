@@ -55,3 +55,9 @@ class PokemonGame:
     
     def get_correct(self):
         return self.correct
+
+    def get_highscores(self):
+        return getData.get_highscore()
+
+    def submit_highscore(self, name):
+        getData.set_highscore(name, self.score)
