@@ -211,7 +211,7 @@ class PokemonGameUI:
 
     def submit_name_and_go_to_menu(self):
         # Name aus dem Eingabefeld holen und auf 255 Zeichen begrenzen
-        player_name = self.name_entry.get().strip()[:255]  # Remove leading/trailing whitespace and truncate to 255 characters
+        player_name = self.name_entry.get().strip()[:20]  # Remove leading/trailing whitespace and truncate to 255 characters
 
         # Überprüfen, ob der Name gültig ist (mindestens ein Buchstabe)
         if len(player_name) < 1:
