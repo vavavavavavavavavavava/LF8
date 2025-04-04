@@ -49,7 +49,6 @@ class PokemonGameUI:
         self.question_label = tk.Label(self.root, text="")  # Frage-Platzhalter
         self.answer_buttons = [tk.Button(self.root, text="", width=15, height=2) for _ in range(4)]  # Antwortknöpfe
         self.scoreboard_data = tk.Label(self.root, text=f"Score: {self.game.get_score()}", font=("Arial", 14))
-        #self.scoreboard_databank = 
         self.next_button = tk.Button(self.root, text="Weiter", command=self.next_question, width=15, height=2)
 
         # Hauptmenü anzeigen
@@ -162,18 +161,23 @@ class PokemonGameUI:
         # Logo in der mittleren Spalte anzeigen
         self.logo_label.grid(row=0, column=1, pady=20)
 
-        # Scoreboard anzeigen
-        self.scoreboard_data.grid(row=1, column=1, pady=10) 
+    def scoreboard(self):
+        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
+        for widget in self.root.winfo_children():
+            widget.grid_forget()
 
-        ## Zurück-Button erstellen
-        self.menu_button = tk.Button(self.root, text="Zurück", command=self.go_to_main_menu, font=("Arial", 14))
-        self.menu_button.grid(row=2, column=1, pady=20)
+        # Logo in der mittleren Spalte anzeigen
+        self.logo_label.grid(row=0, column=1, pady=20)
 
         # Highscores aus der Datenbank abrufen und anzeigen
         highscores = self.game.get_highscores()
         for i, entry in enumerate(highscores):
             name, score = entry['name'], entry['score']
-            tk.Label(self.root, text=f"{i+1}. {name}: {score}", font=("Arial", 14)).grid(row=i+3, column=1, pady=5)
+            tk.Label(self.root, text=f"{i+1}. {name}: {score}", font=("Arial", 14)).grid(row=i+1, column=1, pady=5)
+
+        # "Zurück"-Button unter der Highscore-Liste platzieren
+        self.menu_button = tk.Button(self.root, text="Zurück", command=self.go_to_main_menu, font=("Arial", 14))
+        self.menu_button.grid(row=len(highscores) + 2, column=1, pady=20)
 
         
 
@@ -206,14 +210,26 @@ class PokemonGameUI:
         self.game.reset_correct()
 
     def submit_name_and_go_to_menu(self):
-        # Name aus dem Eingabefeld holen
-        player_name = self.name_entry.get()
+        # Name aus dem Eingabefeld holen und auf 255 Zeichen begrenzen
+        player_name = self.name_entry.get().strip()[:255]  # Remove leading/trailing whitespace and truncate to 255 characters
+
+        # Überprüfen, ob der Name gültig ist (mindestens ein Buchstabe)
+        if len(player_name) < 1:
+            # Fehlermeldung anzeigen
+            error_label = tk.Label(self.root, text="Please enter a valid name!", font=("Arial", 12), fg="red")
+            error_label.grid(row=5, column=1, pady=10)
+
+            # Entferne die Fehlermeldung nach 3 Sekunden
+            self.root.after(3000, error_label.destroy)
+            return
+
+        # Highscore speichern
         self.game.submit_highscore(player_name)
         self.game.reset_score()
         self.update_scoreboard()
+
         # Zurück zum Hauptmenü
         self.go_to_main_menu()
-
 
     def exit_game(self):
         self.root.destroy()
