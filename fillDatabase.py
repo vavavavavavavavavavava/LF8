@@ -47,13 +47,15 @@ def convert_to_black(image):
                 pixels[x, y] = (0, 0, 0, 255)  # Setze den Pixel auf schwarz
     return image
 
-def save_pokemon_batch_to_database(cursor, pokemon_data):
-    """Speichert mehrere Pokémon-Daten in der MySQL-Datenbank."""
+def save_pokemon_batch_to_database(cursor, pokemon_data, batch_size=100):
+    """Speichert mehrere Pokémon-Daten in der MySQL-Datenbank in kleineren Batches."""
     sql = '''
     INSERT IGNORE INTO pokemon (pokedex_number, name, original_image, black_image)
     VALUES (%s, %s, %s, %s)
     '''
-    cursor.executemany(sql, pokemon_data)
+    for i in range(0, len(pokemon_data), batch_size):
+        batch = pokemon_data[i:i + batch_size]
+        cursor.executemany(sql, batch)
 
 def fetch_and_process_pokemon(pokemon, cursor):
     """Holt und verarbeitet die Daten eines einzelnen Pokémon."""

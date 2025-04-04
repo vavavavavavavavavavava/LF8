@@ -7,7 +7,7 @@ import tkinter as tk
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'root',
+    'password': 'passwort',
     'database': 'pokemon_db'
 }
 
