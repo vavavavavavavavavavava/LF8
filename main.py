@@ -3,12 +3,19 @@ import tkinter as tk
 from PokemonGame import PokemonGame
 from PokemonGameUI import PokemonGameUI
 
-# Hauptfenster erstellen
-root = tk.Tk()
+class Main:
+    def __init__(self):
+        # Hauptfenster erstellen
+        self.root = tk.Tk()
 
-# Game- und UI-Instanzen erstellen
-game = PokemonGame()
-game_ui = PokemonGameUI(root, game)
+        # Game- und UI-Instanzen erstellen
+        self.game = PokemonGame()
+        self.game_ui = PokemonGameUI(self.root, self.game)
 
-# Tkinter-Schleife ausführen
-root.mainloop() 
+    def run(self):
+        # Tkinter-Schleife ausführen
+        self.root.mainloop()
+
+if __name__ == "__main__":
+    app = Main()
+    app.run()

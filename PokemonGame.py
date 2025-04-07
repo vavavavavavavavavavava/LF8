@@ -2,6 +2,7 @@
 import random
 from Question import Question
 from Score import Score
+from Scoreboard import Scoreboard
 import getData
 
 class PokemonGame:
@@ -9,6 +10,7 @@ class PokemonGame:
         self.current_question = None
         self.score = None
         self.correct = True
+        self.scoreboard = Scoreboard()  # Scoreboard-Instanz
         self.start_new_game()
 
     def start_new_game(self):
@@ -41,7 +43,9 @@ class PokemonGame:
         return self.correct
 
     def get_highscores(self):
-        return getData.get_highscore()
+        """Holt die Highscores über die Scoreboard-Klasse."""
+        return self.scoreboard.get_highscores()
 
     def submit_highscore(self, name):
-        getData.set_highscore(name, self.score.get())
+        """Speichert den Highscore über die Scoreboard-Klasse."""
+        self.scoreboard.submit_highscore(name, self.score.get())

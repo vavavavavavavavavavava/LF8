@@ -165,22 +165,15 @@ class PokemonGameUI:
         self.ask_question()
 
     def scoreboard(self):
-        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
+        """Zeigt das Scoreboard an."""
+        # Alle Widgets aus dem Fenster entfernen
         for widget in self.root.winfo_children():
             widget.grid_forget()
 
         # Logo in der mittleren Spalte anzeigen
         self.logo_label.grid(row=0, column=1, pady=20)
 
-    def scoreboard(self):
-        # Alle Widgets aus dem Fenster entfernen (Clean Slate)
-        for widget in self.root.winfo_children():
-            widget.grid_forget()
-
-        # Logo in der mittleren Spalte anzeigen
-        self.logo_label.grid(row=0, column=1, pady=20)
-
-        # Highscores aus der Datenbank abrufen und anzeigen
+        # Highscores aus der Game-Logik abrufen
         highscores = self.game.get_highscores()
         for i, entry in enumerate(highscores):
             name, score = entry['name'], entry['score']
@@ -188,9 +181,7 @@ class PokemonGameUI:
 
         # "Zurück"-Button unter der Highscore-Liste platzieren
         self.menu_button = tk.Button(self.root, text="Back", command=self.go_to_main_menu, font=("Arial", 14))
-        self.menu_button.grid(row=len(highscores) + 2, column=1, pady=20)
-
-        
+        self.menu_button.grid(row=len(highscores) + 2, column=1, pady=20)  
 
     def end_game(self):
         # Alle Widgets aus dem Fenster entfernen (Clean Slate)
