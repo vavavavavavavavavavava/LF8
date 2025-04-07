@@ -8,7 +8,6 @@ It uses the tkinter library for UI components and integrates with the game logic
 import tkinter as tk
 from PIL import ImageTk, Image
 
-
 class PokemonGameUI:
     """
     A class to represent the GUI for the "Who's that Pokemon?" game.
@@ -43,6 +42,9 @@ class PokemonGameUI:
         self.scoreboard_button = None
         self.submit_button = None
         self.menu_button = None
+        self.score_label = None
+        self.name_label = None
+        self.name_entry = None
 
         self.prepare_ui()
 
