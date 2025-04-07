@@ -15,16 +15,8 @@ db_config = {
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
-# 1. Funktion, um alle Pokémon zu bekommen
-def get_all_pokemon():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT pokedex_number, name FROM pokemon')
-    result = cursor.fetchall()
-    conn.close()
-    return result
 
-# 3. Funktion, um den Namen eines Pokémon anhand der Pokédex-Nummer zu bekommen
+# Funktion, um den Namen eines Pokémon anhand der Pokédex-Nummer zu bekommen
 def get_pokemon_name(pokedex_number):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)

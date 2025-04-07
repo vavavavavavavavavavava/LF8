@@ -115,6 +115,7 @@ class PokemonGameUI:
             self.end_game()
         else:
             self.ask_question(random.randint(1, 1025))
+
     def go_to_main_menu(self):
         # Alle Widgets aus dem Fenster entfernen (Clean Slate)
         for widget in self.root.winfo_children():
@@ -139,6 +140,9 @@ class PokemonGameUI:
             self.answer_buttons[i].grid(row=i+1, column=1, pady=5)
 
     def start_game(self):
+        # Neues Spiel starten
+        self.game.start_new_game()
+
         # Start- und Exit-Buttons ausblenden
         self.start_button.grid_forget()
         self.scoreboard_button.grid_forget()
@@ -225,7 +229,6 @@ class PokemonGameUI:
 
         # Highscore speichern
         self.game.submit_highscore(player_name)
-        self.game.reset_score()
         self.update_scoreboard()
 
         # Zurück zum Hauptmenü
