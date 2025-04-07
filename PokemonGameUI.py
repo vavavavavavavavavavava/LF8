@@ -1,7 +1,5 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-import random
-
 
 class PokemonGameUI:
     def __init__(self, root, game):
