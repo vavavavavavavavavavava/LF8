@@ -1,13 +1,30 @@
-# game.py
+"""
+PokemonGame Module
+
+This module contains the implementation of the PokemonGame class, which manages
+the core logic of a Pokémon-themed game. The game involves generating random
+Pokémon questions, tracking the player's score, and maintaining a scoreboard
+of highscores.
+"""
+
 import random
 from Question import Question
 from Score import Score
 from Scoreboard import Scoreboard
 
-class pokemon_game:
+class PokemonGame:
+    """
+    PokemonGame Class
+
+    This class represents the main game logic for a Pokémon-themed game. It handles
+    generating questions, tracking the player's score, and interacting with the
+    scoreboard. The game allows players to answer questions, track their progress,
+    and submit their highscores.
+    """
+
     def __init__(self):
         """
-        Initializes a new instance of the pokemon_game class.
+        Initializes a new instance of the PokemonGame class.
         Sets up the initial state of the game, including the scoreboard,
         score, and the first question.
         """

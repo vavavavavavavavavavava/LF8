@@ -1,6 +1,6 @@
 # main.py
 import tkinter as tk
-from PokemonGame import pokemon_game
+from PokemonGame import PokemonGame
 from PokemonGameUI import PokemonGameUI
 
 class Main:
@@ -9,7 +9,7 @@ class Main:
         self.root = tk.Tk()
 
         # Game- und UI-Instanzen erstellen
-        self.game = pokemon_game()
+        self.game = PokemonGame()
         self.game_ui = PokemonGameUI(self.root, self.game)
 
     def run(self):
