@@ -79,42 +79,46 @@ class PokemonGameUI:
         self.img_label.grid(row=0, column=1, pady=10)  # Display image in the center column
 
     def check_answer(self, choice, button):
-            # Alle Antwort-Buttons deaktivieren
-            for btn in self.answer_buttons:
-                btn.config(state="disabled", disabledforeground="black")
+        """Überprüft die Antwort und zeigt das Ergebnis an."""
+        question = self.game.get_current_question()
 
-            if choice == self.game.get_correct_answer():
-                button.config(bg="green", fg="black")  # Richtige Antwort wird grün
-                self.game.increase_score()
-                self.update_scoreboard()
-            else:
-                button.config(bg="red", fg="black")  # Falsche Antwort wird rot
-                self.game.wrong_answer()
+        # Alle Antwort-Buttons deaktivieren
+        for btn in self.answer_buttons:
+            btn.config(state="disabled", disabledforeground="black")
 
-            # Sicherstellen, dass der richtige Antwort-Knopf grün wird
-            for btn in self.answer_buttons:
-                if btn.cget("text") == self.game.get_correct_answer():
-                    btn.config(bg="green", fg="black")
+        if choice == question.get_correct_answer():
+            button.config(bg="green", fg="black")  # Richtige Antwort wird grün
+            self.game.increase_score()
+            self.update_scoreboard()
+        else:
+            button.config(bg="red", fg="black")  # Falsche Antwort wird rot
+            self.game.wrong_answer()
 
-            # Das Originalbild anzeigen
-            self.load_image(self.game.get_original_image())
+        # Sicherstellen, dass der richtige Antwort-Knopf grün wird
+        for btn in self.answer_buttons:
+            if btn.cget("text") == question.get_correct_answer():
+                btn.config(bg="green", fg="black")
 
-            # Weiter-Button anzeigen
-            self.next_button.grid(row=5, column=1, pady=20)
+        # Das Originalbild anzeigen
+        self.load_image(question.get_original_image())
+
+        # Weiter-Button anzeigen
+        self.next_button.grid(row=5, column=1, pady=20)
 
     def next_question(self):
-        # Weiter-Button ausblenden
+        """Wechselt zur nächsten Frage."""
         self.next_button.grid_forget()
-        
+
         # Antwortknöpfe zurücksetzen
         for btn in self.answer_buttons:
             btn.config(state="normal", bg="SystemButtonFace")
             btn.grid_forget()
 
-        if self.game.get_correct() == False:
+        if not self.game.get_correct():
             self.end_game()
         else:
-            self.ask_question(random.randint(1, 1025))
+            self.game.next_question()
+            self.ask_question()
 
     def go_to_main_menu(self):
         # Alle Widgets aus dem Fenster entfernen (Clean Slate)
@@ -127,16 +131,19 @@ class PokemonGameUI:
         # Zähler zurücksetzen
         self.game.reset_correct()
 
-    def ask_question(self, pokedexNR):
-        self.game.prepare_question_data(pokedexNR)
+    def ask_question(self):
+        """Stellt die aktuelle Frage."""
+        question = self.game.get_current_question()
 
         # Anfangsbild anzeigen
-        self.load_image(self.game.get_black_image())
+        self.load_image(question.get_black_image())
 
         # Antwortknöpfe anzeigen
-        for i, choice in enumerate(self.game.get_choices()):
-            self.answer_buttons[i].config(text=choice, 
-                                        command=lambda c=choice, b=self.answer_buttons[i]: self.check_answer(c, b))
+        for i, choice in enumerate(question.get_choices()):
+            self.answer_buttons[i].config(
+                text=choice,
+                command=lambda c=choice, b=self.answer_buttons[i]: self.check_answer(c, b)
+            )
             self.answer_buttons[i].grid(row=i+1, column=1, pady=5)
 
     def start_game(self):
@@ -155,7 +162,7 @@ class PokemonGameUI:
         self.scoreboard_data.grid(row=0, column=2, pady=20, padx=20)
 
         # Erste Frage stellen
-        self.ask_question(random.randint(1, 1025))
+        self.ask_question()
 
     def scoreboard(self):
         # Alle Widgets aus dem Fenster entfernen (Clean Slate)

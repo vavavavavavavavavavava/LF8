@@ -1,14 +1,12 @@
 # game.py
 import random
-import getData
+from Question import Question
 from Score import Score
+import getData
 
 class PokemonGame:
     def __init__(self):
-        self.correct_answer = None
-        self.choices = None
-        self.black_image = None
-        self.original_image = None
+        self.current_question = None
         self.score = None
         self.correct = True
         self.start_new_game()
@@ -17,32 +15,15 @@ class PokemonGame:
         """Startet ein neues Spiel und erstellt eine neue Score-Instanz."""
         self.score = Score()
         self.correct = True
+        self.next_question()
 
-    def random_exclude(self, pokedexNR):
-        x = random.randint(1, 1025)
-        if x == pokedexNR:
-            return self.random_exclude(pokedexNR)
-        else:
-            return getData.get_pokemon_name(x)
+    def next_question(self):
+        """Erstellt eine neue Frage."""
+        pokedexNr = random.randint(1, 1025)
+        self.current_question = Question(pokedexNr)
 
-    def prepare_question_data(self, pokedexNr):
-        self.original_image = getData.get_pokemon_image(pokedexNr)
-        self.black_image = getData.get_black_image(pokedexNr)
-        self.correct_answer = getData.get_pokemon_name(pokedexNr)
-        self.choices = [self.random_exclude(pokedexNr), self.random_exclude(pokedexNr), self.random_exclude(pokedexNr), self.correct_answer]
-        random.shuffle(self.choices)
-
-    def get_correct_answer(self):
-        return self.correct_answer
-
-    def get_choices(self):
-        return self.choices
-
-    def get_black_image(self):
-        return self.black_image
-
-    def get_original_image(self):
-        return self.original_image
+    def get_current_question(self):
+        return self.current_question
 
     def increase_score(self):
         self.score.increase()
