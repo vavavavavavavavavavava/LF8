@@ -42,14 +42,14 @@ class PokemonGameUI:
         self.logo_label.image = logo_photo  # Referenz zum Bild behalten
 
         # UI-Elemente erstellen
-        self.start_button = tk.Button(self.root, text="Spiel Starten", command=self.start_game, width=15, height=2)
+        self.start_button = tk.Button(self.root, text="Start Game", command=self.start_game, width=15, height=2)
         self.scoreboard_button = tk.Button(self.root, text="Scoreboard", command=self.scoreboard, width=15, height=2)
-        self.exit_button = tk.Button(self.root, text="Beenden", command=self.exit_game, width=15, height=2)
+        self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_game, width=15, height=2)
         self.img_label = tk.Label(self.root)  # Bildplatzhalter
         self.question_label = tk.Label(self.root, text="")  # Frage-Platzhalter
         self.answer_buttons = [tk.Button(self.root, text="", width=15, height=2) for _ in range(4)]  # Antwortknöpfe
         self.scoreboard_data = tk.Label(self.root, text=f"Score: {self.game.get_score()}", font=("Arial", 14))
-        self.next_button = tk.Button(self.root, text="Weiter", command=self.next_question, width=15, height=2)
+        self.next_button = tk.Button(self.root, text="Continue", command=self.next_question, width=15, height=2)
 
         # Hauptmenü anzeigen
         self.show_main_menu()
@@ -176,7 +176,7 @@ class PokemonGameUI:
             tk.Label(self.root, text=f"{i+1}. {name}: {score}", font=("Arial", 14)).grid(row=i+1, column=1, pady=5)
 
         # "Zurück"-Button unter der Highscore-Liste platzieren
-        self.menu_button = tk.Button(self.root, text="Zurück", command=self.go_to_main_menu, font=("Arial", 14))
+        self.menu_button = tk.Button(self.root, text="Back", command=self.go_to_main_menu, font=("Arial", 14))
         self.menu_button.grid(row=len(highscores) + 2, column=1, pady=20)
 
         
