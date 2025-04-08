@@ -8,9 +8,9 @@ of highscores.
 """
 
 import random
-from Question import Question
-from Score import Score
-from Scoreboard import Scoreboard
+from question import Question
+from score import Score
+from scoreboard import Scoreboard
 
 class PokemonGame:
     """

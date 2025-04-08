@@ -4,8 +4,8 @@ It initializes the main application window, manages the database, and starts the
 """
 
 import tkinter as tk
-from PokemonGame import PokemonGame
-from PokemonGameUI import PokemonGameUI
+from pokemon_game import PokemonGame
+from pokemon_game_ui import PokemonGameUI
 from database_manager import PokemonDatabaseManager
 
 class Main:
