@@ -1,7 +1,7 @@
 """
-This module provides functionality to manage a Pokémon database. It includes methods to fetch Pokémon data
-from the PokeAPI, process and store the data in a MySQL database, and retrieve Pokémon information such as
-names, images, and highscores.
+This module provides functionality to manage a Pokémon database. It includes methods to fetch
+Pokémon data from the PokeAPI, process and store the data in a MySQL database, and retrieve Pokémon
+information such as names, images, and highscores.
 """
 
 import io
@@ -14,8 +14,8 @@ from PIL import Image
 
 class PokemonDatabaseManager:
     """
-    A class to manage Pokémon data in a MySQL database. It provides methods to fetch data from the PokeAPI,
-    process and store the data, and retrieve Pokémon information and highscores.
+    A class to manage Pokémon data in a MySQL database. It provides methods to fetch data from the
+    PokeAPI, process and store the data, and retrieve Pokémon information and highscores.
     """
 
     def __init__(self):
@@ -142,7 +142,8 @@ class PokemonDatabaseManager:
                 black_image.save(black_image_blob, format='PNG')
                 black_image_blob.seek(0)
 
-                return (pokemon_id, pokemon_name, original_image_blob.read(), black_image_blob.read())
+                return (
+                    pokemon_id, pokemon_name, original_image_blob.read(), black_image_blob.read())
         return None
 
     def process_pokemon_data_parallel(self, data, cursor):
@@ -194,7 +195,8 @@ class PokemonDatabaseManager:
         """
         conn = self.connect_to_database()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute('SELECT original_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
+        cursor.execute(
+            'SELECT original_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
         result = cursor.fetchone()
         conn.close()
 
@@ -216,7 +218,8 @@ class PokemonDatabaseManager:
         """
         conn = self.connect_to_database()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute('SELECT black_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
+        cursor.execute(
+            'SELECT black_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
         result = cursor.fetchone()
         conn.close()
 

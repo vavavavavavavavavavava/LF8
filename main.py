@@ -26,7 +26,7 @@ class Main:
             self.db_manager.fill_database()
         else:
             print("Database is already filled with Pokémon data.")
-            
+
 if __name__ == "__main__":
     app = Main()
     app.check_database()
