@@ -1,4 +1,3 @@
-# main.py
 """
 This module serves as the entry point for the Pokémon game application. 
 It initializes the main application window, manages the database, and starts the game UI.
@@ -53,10 +52,6 @@ class Main:
             print("Database is already filled with Pokémon data.")
 
 if __name__ == "__main__":
-    """
-    Entry point of the application. Initializes the Main class, 
-    checks the database, and starts the application.
-    """
     app = Main()
     app.check_database()
     app.run()
