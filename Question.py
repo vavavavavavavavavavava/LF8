@@ -4,7 +4,6 @@ It retrieves Pokémon data such as names and images and generates multiple-choic
 """
 
 import random
-from database_manager import PokemonDatabaseManager
 
 class Question:
     """

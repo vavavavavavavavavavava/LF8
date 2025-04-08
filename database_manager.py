@@ -46,7 +46,7 @@ class PokemonDatabaseManager:
         Returns:
             dict: The JSON response containing Pokémon data, or None if the request fails.
         """
-        response = requests.get(self.api_url)
+        response = requests.get(self.api_url, timeout=10)
         if response.status_code == 200:
             return response.json()
         print("Fehler bei der Anfrage zur PokeAPI")
@@ -62,7 +62,7 @@ class PokemonDatabaseManager:
         Returns:
             dict: The JSON response containing Pokémon details, or None if the request fails.
         """
-        response = requests.get(pokemon_url)
+        response = requests.get(pokemon_url, timeout=10)
         if response.status_code == 200:
             return response.json()
         print(f"Fehler beim Abrufen der Details von {pokemon_url}")
@@ -127,7 +127,7 @@ class PokemonDatabaseManager:
         print(f"Fetching Pokémon: {pokemon_name} (ID: {pokemon_id})")
 
         if front_sprite_url:
-            img_response = requests.get(front_sprite_url)
+            img_response = requests.get(front_sprite_url, timeout=10)
             if img_response.status_code == 200:
                 original_image = Image.open(io.BytesIO(img_response.content))
 

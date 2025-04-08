@@ -5,8 +5,6 @@ This module provides a `Scoreboard` class to interact with a database of highsco
 It allows retrieving and submitting highscores using the `PokemonDatabaseManager` class.
 """
 
-from database_manager import PokemonDatabaseManager
-
 class Scoreboard:
     """
     A class to manage highscores.
