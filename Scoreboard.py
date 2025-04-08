@@ -1,5 +1,5 @@
 """
-Scoreboard Module
+scoreboard Module
 
 This module provides a `Scoreboard` class to interact with a database of highscores.
 It allows retrieving and submitting highscores using the `PokemonDatabaseManager` class.

@@ -1,5 +1,5 @@
 """
-PokemonGameUI Module
+pokemon_game_ui Module
 
 This module provides a graphical user interface (GUI) for the "Who's that Pokemon?" game.
 It uses the tkinter library for UI components and integrates with the game logic.

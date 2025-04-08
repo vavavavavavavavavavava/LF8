@@ -1,5 +1,5 @@
 """
-This module defines the Score class, which is used to manage and track a score value.
+The score module defines the Score class, which is used to manage and track a score value.
 """
 
 class Score:

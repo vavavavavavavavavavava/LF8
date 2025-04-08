@@ -1,5 +1,5 @@
 """
-PokemonGame Module
+pokemon_game Module
 
 This module contains the implementation of the PokemonGame class, which manages
 the core logic of a Pokémon-themed game. The game involves generating random

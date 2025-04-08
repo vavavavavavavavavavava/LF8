@@ -1,5 +1,5 @@
 """
-This module defines the `Question` class, which represents a Pokémon quiz question.
+The question module defines the `Question` class, which represents a Pokémon quiz question.
 It retrieves Pokémon data such as names and images and generates multiple-choice answers.
 """
 
