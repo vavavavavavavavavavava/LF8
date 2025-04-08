@@ -52,6 +52,11 @@ class Main:
             print("Database is already filled with Pokémon data.")
 
 if __name__ == "__main__":
+    print("Starting Pokémon Game...")
     app = Main()
+    print("Initializing database...")
     app.check_database()
+    print("Starting game...")
+    app.game.start_new_game()
+    app.game_ui.prepare_ui()
     app.run()

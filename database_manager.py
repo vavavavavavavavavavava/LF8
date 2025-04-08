@@ -49,7 +49,7 @@ class PokemonDatabaseManager:
         response = requests.get(self.api_url, timeout=10)
         if response.status_code == 200:
             return response.json()
-        print("Fehler bei der Anfrage zur PokeAPI")
+        print("Error while requesting data from the PokeAPI")
         return None
 
     def fetch_pokemon_details(self, pokemon_url):
@@ -65,7 +65,7 @@ class PokemonDatabaseManager:
         response = requests.get(pokemon_url, timeout=10)
         if response.status_code == 200:
             return response.json()
-        print(f"Fehler beim Abrufen der Details von {pokemon_url}")
+        print(f"Error while fetching details from {pokemon_url}")
         return None
 
     def convert_to_black(self, image):
@@ -162,7 +162,7 @@ class PokemonDatabaseManager:
 
         # Batch insert into the database
         self.save_pokemon_batch_to_database(cursor, pokemon_batch)
-        print(f"{len(pokemon_batch)} Pokémon-Datensätze gespeichert.")
+        print(f"{len(pokemon_batch)} Pokémon records saved.")
 
     def get_pokemon_name(self, pokedex_number):
         """
@@ -277,7 +277,7 @@ class PokemonDatabaseManager:
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Datenbankbefüllung abgeschlossen. Dauer: {elapsed_time:.2f} Sekunden")
+        print(f"Database population completed. Duration: {elapsed_time:.2f} seconds")
 
     def get_highest_pokedex_number(self):
         """

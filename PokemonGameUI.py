@@ -46,8 +46,6 @@ class PokemonGameUI:
         self.name_label = None
         self.name_entry = None
 
-        self.prepare_ui()
-
     def prepare_ui(self):
         """
         Prepare the UI elements for the main menu and start view.
@@ -75,7 +73,7 @@ class PokemonGameUI:
         self.img_label = tk.Label(self.root)
         self.question_label = tk.Label(self.root, text="")
         self.answer_buttons = [
-            tk.Button(self.root, text="", width=15, height=2) for _ in range(4)
+            tk.Button(self.root, text="", width=25, height=2) for _ in range(4)
         ]
         self.scoreboard_data = tk.Label(
             self.root, text=f"Score: {self.game.get_score()}", font=("Arial", 14)

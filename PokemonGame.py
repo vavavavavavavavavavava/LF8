@@ -36,7 +36,6 @@ class PokemonGame:
         self.score = None
         self.correct = True
         self.scoreboard = Scoreboard(self.db_manager)
-        self.start_new_game()
 
     def start_new_game(self):
         """
