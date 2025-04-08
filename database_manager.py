@@ -294,4 +294,4 @@ class PokemonDatabaseManager:
 
         if result and result['highest_pokedex_number'] is not None:
             return int(result['highest_pokedex_number'])
-        return None
+        return 0
