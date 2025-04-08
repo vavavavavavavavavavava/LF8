@@ -2,24 +2,27 @@
 Scoreboard Module
 
 This module provides a `Scoreboard` class to interact with a database of highscores.
-It allows retrieving and submitting highscores using the `getData` module.
+It allows retrieving and submitting highscores using the `PokemonDatabaseManager` class.
 """
 
-import getData
+from database_manager import PokemonDatabaseManager
 
 class Scoreboard:
     """
     A class to manage highscores.
 
     This class provides methods to retrieve and submit highscores
-    to a database using the `getData` module.
+    to a database using the `PokemonDatabaseManager` class.
     """
 
-    def __init__(self):
+    def __init__(self, db_manager):
         """
         Initializes the Scoreboard instance.
+
+        Args:
+            db_manager (PokemonDatabaseManager): The database manager instance.
         """
-        pass
+        self.db_manager = db_manager
 
     def get_highscores(self):
         """
@@ -28,7 +31,7 @@ class Scoreboard:
         Returns:
             list: A list of highscores retrieved from the database.
         """
-        return getData.get_highscore()
+        return self.db_manager.get_highscore()
 
     def submit_highscore(self, name, score):
         """
@@ -38,4 +41,4 @@ class Scoreboard:
             name (str): The name of the player.
             score (int): The score achieved by the player.
         """
-        getData.set_highscore(name, score)
+        self.db_manager.set_highscore(name, score)

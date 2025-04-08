@@ -4,7 +4,7 @@ It retrieves Pokémon data such as names and images and generates multiple-choic
 """
 
 import random
-import getData
+from database_manager import PokemonDatabaseManager
 
 class Question:
     """
@@ -13,22 +13,24 @@ class Question:
     Attributes:
         pokedex_number (int): The Pokédex number of the Pokémon.
         correct_answer (str): The correct name of the Pokémon.
-        original_image (str): The URL or path to the original Pokémon image.
-        black_image (str): The URL or path to the blacked-out Pokémon image.
+        original_image (PIL.Image): The original Pokémon image.
+        black_image (PIL.Image): The blacked-out Pokémon image.
         choices (list): A list of answer choices, including the correct answer.
     """
 
-    def __init__(self, pokedex_number):
+    def __init__(self, pokedex_number, db_manager):
         """
         Initializes a Question instance.
 
         Args:
             pokedex_number (int): The Pokédex number of the Pokémon.
+            db_manager (PokemonDatabaseManager): The database manager instance.
         """
         self.pokedex_number = pokedex_number
-        self.correct_answer = getData.get_pokemon_name(pokedex_number)
-        self.original_image = getData.get_pokemon_image(pokedex_number)
-        self.black_image = getData.get_black_image(pokedex_number)
+        self.db_manager = db_manager
+        self.correct_answer = self.db_manager.get_pokemon_name(pokedex_number)
+        self.original_image = self.db_manager.get_pokemon_image(pokedex_number)
+        self.black_image = self.db_manager.get_black_image(pokedex_number)
         self.choices = self.generate_choices()
 
     def generate_choices(self):
@@ -40,7 +42,7 @@ class Question:
         """
         choices = [self.correct_answer]
         while len(choices) < 4:
-            choice = getData.get_pokemon_name(random.randint(1, 1025))
+            choice = self.db_manager.get_pokemon_name(random.randint(1, 1025))
             if choice and choice not in choices:
                 choices.append(choice)
         random.shuffle(choices)
@@ -69,7 +71,7 @@ class Question:
         Retrieves the blacked-out image of the Pokémon.
 
         Returns:
-            str: The URL or path to the blacked-out Pokémon image.
+            PIL.Image: The blacked-out Pokémon image.
         """
         return self.black_image
 
@@ -78,6 +80,6 @@ class Question:
         Retrieves the original image of the Pokémon.
 
         Returns:
-            str: The URL or path to the original Pokémon image.
+            PIL.Image: The original Pokémon image.
         """
         return self.original_image

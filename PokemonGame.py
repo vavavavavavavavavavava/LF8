@@ -22,16 +22,20 @@ class PokemonGame:
     and submit their highscores.
     """
 
-    def __init__(self):
+    def __init__(self, db_manager):
         """
         Initializes a new instance of the PokemonGame class.
         Sets up the initial state of the game, including the scoreboard,
         score, and the first question.
+
+        Args:
+            db_manager (PokemonDatabaseManager): The database manager instance.
         """
+        self.db_manager = db_manager
         self.current_question = None
         self.score = None
         self.correct = True
-        self.scoreboard = Scoreboard()
+        self.scoreboard = Scoreboard(self.db_manager)
         self.start_new_game()
 
     def start_new_game(self):
@@ -49,7 +53,7 @@ class PokemonGame:
         The question is created using the Question class.
         """
         pokedex_number = random.randint(1, 1025)
-        self.current_question = Question(pokedex_number)
+        self.current_question = Question(pokedex_number, self.db_manager)
 
     def get_current_question(self):
         """
