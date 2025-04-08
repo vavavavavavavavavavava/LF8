@@ -4,13 +4,13 @@ from the PokeAPI, process and store the data in a MySQL database, and retrieve P
 names, images, and highscores.
 """
 
+import io
+import time
+from io import BytesIO
+from concurrent.futures import ThreadPoolExecutor
 import requests
 import mysql.connector
 from PIL import Image
-import io
-import time
-from concurrent.futures import ThreadPoolExecutor
-from io import BytesIO
 
 class PokemonDatabaseManager:
     """
@@ -49,9 +49,8 @@ class PokemonDatabaseManager:
         response = requests.get(self.api_url)
         if response.status_code == 200:
             return response.json()
-        else:
-            print("Fehler bei der Anfrage zur PokeAPI")
-            return None
+        print("Fehler bei der Anfrage zur PokeAPI")
+        return None
 
     def fetch_pokemon_details(self, pokemon_url):
         """
@@ -66,9 +65,8 @@ class PokemonDatabaseManager:
         response = requests.get(pokemon_url)
         if response.status_code == 200:
             return response.json()
-        else:
-            print(f"Fehler beim Abrufen der Details von {pokemon_url}")
-            return None
+        print(f"Fehler beim Abrufen der Details von {pokemon_url}")
+        return None
 
     def convert_to_black(self, image):
         """
@@ -85,7 +83,7 @@ class PokemonDatabaseManager:
         width, height = image.size
         for y in range(height):
             for x in range(width):
-                r, g, b, a = pixels[x, y]
+                a = pixels[x, y][3]
                 if a > 0:  # If the pixel is not transparent
                     pixels[x, y] = (0, 0, 0, 255)  # Set the pixel to black
         return image
@@ -115,32 +113,33 @@ class PokemonDatabaseManager:
             pokemon (dict): A dictionary containing Pokémon data from the PokeAPI.
 
         Returns:
-            tuple: A tuple containing Pokémon ID, name, original image blob, and black image blob, or None if processing fails.
+            tuple: A tuple containing Pokémon ID, name, original image blob, and black image blob,
+                   or None if processing fails.
         """
         pokemon_details = self.fetch_pokemon_details(pokemon['url'])
         if not pokemon_details:
             return None
-        
+
         pokemon_name = pokemon_details['name']
         pokemon_id = pokemon_details['id']
         front_sprite_url = pokemon_details['sprites']['other']['official-artwork']['front_default']
-        
+
         if front_sprite_url:
             img_response = requests.get(front_sprite_url)
             if img_response.status_code == 200:
                 original_image = Image.open(io.BytesIO(img_response.content))
-                
+
                 # Save original image as BLOB
                 original_image_blob = io.BytesIO()
                 original_image.save(original_image_blob, format='PNG')
                 original_image_blob.seek(0)
-                
+
                 # Create black image and save as BLOB
                 black_image = self.convert_to_black(original_image)
                 black_image_blob = io.BytesIO()
                 black_image.save(black_image_blob, format='PNG')
                 black_image_blob.seek(0)
-                
+
                 return (pokemon_id, pokemon_name, original_image_blob.read(), black_image_blob.read())
         return None
 
@@ -153,11 +152,11 @@ class PokemonDatabaseManager:
             cursor (mysql.connector.cursor.MySQLCursor): The database cursor.
         """
         with ThreadPoolExecutor(max_workers=10) as executor:
-            pokemon_batch = list(executor.map(lambda p: self.fetch_and_process_pokemon(p), data['results']))
-        
+            pokemon_batch = list(executor.map(self.fetch_and_process_pokemon, data['results']))
+
         # Filter out None values
         pokemon_batch = [p for p in pokemon_batch if p]
-        
+
         # Batch insert into the database
         self.save_pokemon_batch_to_database(cursor, pokemon_batch)
         print(f"{len(pokemon_batch)} Pokémon-Datensätze gespeichert.")
@@ -179,8 +178,7 @@ class PokemonDatabaseManager:
         conn.close()
         if result:
             return result['name'].capitalize()
-        else:
-            return None
+        return None
 
     def get_pokemon_image(self, pokedex_number):
         """
@@ -197,13 +195,12 @@ class PokemonDatabaseManager:
         cursor.execute('SELECT original_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
         result = cursor.fetchone()
         conn.close()
-        
+
         if result and result['original_image']:
             image_data = result['original_image']
             image = Image.open(BytesIO(image_data))
             return image
-        else:
-            return None
+        return None
 
     def get_black_image(self, pokedex_number):
         """
@@ -220,13 +217,12 @@ class PokemonDatabaseManager:
         cursor.execute('SELECT black_image FROM pokemon WHERE pokedex_number = %s', (pokedex_number,))
         result = cursor.fetchone()
         conn.close()
-        
+
         if result and result['black_image']:
             image_data = result['black_image']
             image = Image.open(BytesIO(image_data))
             return image
-        else:
-            return None
+        return None
 
     def set_highscore(self, name, score):
         """
@@ -263,17 +259,17 @@ class PokemonDatabaseManager:
         Fetches data from the PokeAPI, processes it, and stores it in the database.
         """
         start_time = time.time()
-        
+
         conn = self.connect_to_database()
         cursor = conn.cursor()
         data = self.fetch_pokemon_data()
-        
+
         if data:
             self.process_pokemon_data_parallel(data, cursor)
             conn.commit()
-        
+
         conn.close()
-        
+
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Datenbankbefüllung abgeschlossen. Dauer: {elapsed_time:.2f} Sekunden")

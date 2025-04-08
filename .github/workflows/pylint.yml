@@ -20,6 +20,7 @@ jobs:
         pip install pylint
         pip install requests
         pip install pillow
+        pip install mysql-connector-python
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
