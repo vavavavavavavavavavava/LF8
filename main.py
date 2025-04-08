@@ -20,6 +20,14 @@ class Main:
         # Tkinter-Schleife ausführen
         self.root.mainloop()
 
+    def check_database(self):
+        print("Checking database...")
+        if self.db_manager.get_highest_pokedex_number() < 1025:
+            self.db_manager.fill_database()
+        else:
+            print("Database is already filled with Pokémon data.")
+            
 if __name__ == "__main__":
     app = Main()
+    app.check_database()
     app.run()

@@ -124,6 +124,8 @@ class PokemonDatabaseManager:
         pokemon_id = pokemon_details['id']
         front_sprite_url = pokemon_details['sprites']['other']['official-artwork']['front_default']
 
+        print(f"Fetching Pokémon: {pokemon_name} (ID: {pokemon_id})")
+
         if front_sprite_url:
             img_response = requests.get(front_sprite_url)
             if img_response.status_code == 200:
@@ -273,3 +275,20 @@ class PokemonDatabaseManager:
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Datenbankbefüllung abgeschlossen. Dauer: {elapsed_time:.2f} Sekunden")
+
+    def get_highest_pokedex_number(self):
+        """
+        Retrieves the highest Pokédex number from the database.
+
+        Returns:
+            int: The highest Pokédex number, or None if the table is empty.
+        """
+        conn = self.connect_to_database()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT MAX(pokedex_number) AS highest_pokedex_number FROM pokemon')
+        result = cursor.fetchone()
+        conn.close()
+
+        if result and result['highest_pokedex_number'] is not None:
+            return int(result['highest_pokedex_number'])
+        return None
