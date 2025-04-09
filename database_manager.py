@@ -320,7 +320,7 @@ class PokemonDatabaseManager:
             print(f"SQL script not found at {script_path}")
             return
         print("script found")
-        
+
         # Connect to MySQL server without specifying the database
         db_config_without_db = self.db_config.copy()
         db_config_without_db.pop('database', None)
