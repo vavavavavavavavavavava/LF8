@@ -1,4 +1,4 @@
-#drop database pokemon_db if exists;
+drop database if exists pokemon_db;
 CREATE DATABASE pokemon_db;
 
 USE pokemon_db;

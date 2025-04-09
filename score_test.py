@@ -39,7 +39,7 @@ class TestScore(unittest.TestCase):
         """
         for _ in range(5):
             self.score.increase()
-        self.assertEqual(self.score.get(), 4)
+        self.assertEqual(self.score.get(), 5)
 
 if __name__ == '__main__':
     unittest.main()
