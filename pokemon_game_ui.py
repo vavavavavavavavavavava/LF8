@@ -45,6 +45,8 @@ class PokemonGameUI:
         self.name_label = None
         self.name_entry = None
         self.mode_buton = None
+        self.modes = None
+        self.current_mode_index = None
 
     def prepare_ui(self):
         """
