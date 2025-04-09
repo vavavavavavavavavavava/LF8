@@ -11,8 +11,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: passwort
           MYSQL_DATABASE: pokemon_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: passwort
         ports:
           - 3306:3306
         options: >-
