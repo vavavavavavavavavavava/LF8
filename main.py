@@ -45,10 +45,10 @@ class Main:
         Prepares the game by filling the database and starting a new game.
         This method is called before starting the main game loop.
         """
-        app.db_manager.fill_database()
+        self.db_manager.fill_database()
         print("Starting game...")
-        app.game.start_new_game()
-        app.game_ui.prepare_ui()
+        self.game.start_new_game()
+        self.game_ui.prepare_ui()
 
 if __name__ == "__main__":
     print("Starting Pokémon Game...")
