@@ -320,6 +320,7 @@ class PokemonDatabaseManager:
             print(f"SQL script not found at {script_path}")
             return
         print("script found")
+        
         # Connect to MySQL server without specifying the database
         db_config_without_db = self.db_config.copy()
         db_config_without_db.pop('database', None)
@@ -327,16 +328,13 @@ class PokemonDatabaseManager:
         conn = mysql.connector.connect(**db_config_without_db)
         cursor = conn.cursor()
 
-        try:
-            with open(script_path, 'r', encoding='utf-8') as file:
-                sql_script = file.read()
-                for statement in sql_script.split(';'):
-                    if statement.strip():
-                        cursor.execute(statement)
-            conn.commit()
-            print("SQL script executed successfully.")
-        except Exception as e:
-            print(f"An error occurred while executing the SQL script: {e}")
-        finally:
-            cursor.close()
-            conn.close()
+        with open(script_path, 'r', encoding='utf-8') as file:
+            sql_script = file.read()
+            for statement in sql_script.split(';'):
+                if statement.strip():
+                    cursor.execute(statement)
+        conn.commit()
+        print("SQL script executed successfully.")
+
+        cursor.close()
+        conn.close()
