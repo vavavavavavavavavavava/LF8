@@ -28,7 +28,7 @@ class Main:
         self.root = tk.Tk()
 
         # Instanz des Database Managers erstellen
-        self.db_manager = PokemonDatabaseManager()
+        self.db_manager = PokemonDatabaseManager(151)
 
         # Game- und UI-Instanzen erstellen, Database Manager weitergeben
         self.game = PokemonGame(self.db_manager)

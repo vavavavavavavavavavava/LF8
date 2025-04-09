@@ -4,6 +4,7 @@ Pokémon data from the PokeAPI, process and store the data in a MySQL database, 
 information such as names, images, and highscores.
 """
 
+import os
 import io
 import time
 from io import BytesIO
@@ -33,6 +34,7 @@ class PokemonDatabaseManager:
         }
         self.max_pokedex_number = max_pokedex_number
         self.api_url = f"https://pokeapi.co/api/v2/pokemon?limit={self.max_pokedex_number}"
+        self.run_sql_script('createdatabase.sql')
 
     def connect_to_database(self):
         """
@@ -306,3 +308,35 @@ class PokemonDatabaseManager:
         if result and result['highest_pokedex_number'] is not None:
             return int(result['highest_pokedex_number'])
         return 0
+
+    def run_sql_script(self, script_path):
+        """
+        Executes an SQL script to set up the database and tables.
+
+        Args:
+            script_path (str): The file path to the SQL script.
+        """
+        if not os.path.exists(script_path):
+            print(f"SQL script not found at {script_path}")
+            return
+        print("script found")
+        # Connect to MySQL server without specifying the database
+        db_config_without_db = self.db_config.copy()
+        db_config_without_db.pop('database', None)
+
+        conn = mysql.connector.connect(**db_config_without_db)
+        cursor = conn.cursor()
+
+        try:
+            with open(script_path, 'r', encoding='utf-8') as file:
+                sql_script = file.read()
+                for statement in sql_script.split(';'):
+                    if statement.strip():
+                        cursor.execute(statement)
+            conn.commit()
+            print("SQL script executed successfully.")
+        except Exception as e:
+            print(f"An error occurred while executing the SQL script: {e}")
+        finally:
+            cursor.close()
+            conn.close()
