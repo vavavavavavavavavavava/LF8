@@ -32,6 +32,7 @@ class PokemonGame:
             db_manager (PokemonDatabaseManager): The database manager instance.
         """
         self.db_manager = db_manager
+        self.max_pokedex_number = db_manager.max_pokedex_number
         self.current_question = None
         self.score = None
         self.correct = True
@@ -51,7 +52,7 @@ class PokemonGame:
         Generates a new question by selecting a random Pokémon from the Pokédex.
         The question is created using the Question class.
         """
-        pokedex_number = random.randint(1, 1025)
+        pokedex_number = random.randint(1, self.max_pokedex_number)
         self.current_question = Question(pokedex_number, self.db_manager)
 
     def get_current_question(self):

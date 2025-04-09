@@ -46,7 +46,7 @@ class Main:
         Checks if the Pokémon database is filled. If not, it populates the database.
         """
         print("Checking database...")
-        if self.db_manager.get_highest_pokedex_number() < 1025:
+        if self.db_manager.get_highest_pokedex_number() < self.db_manager.max_pokedex_number:
             self.db_manager.fill_database()
         else:
             print("Database is already filled with Pokémon data.")

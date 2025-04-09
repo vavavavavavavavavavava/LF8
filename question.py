@@ -41,7 +41,9 @@ class Question:
         """
         choices = [self.correct_answer]
         while len(choices) < 4:
-            choice = self.db_manager.get_pokemon_name(random.randint(1, 1025))
+            choice = self.db_manager.get_pokemon_name(
+                random.randint(1, self.db_manager.max_pokedex_number)
+            )
             if choice and choice not in choices:
                 choices.append(choice)
         random.shuffle(choices)

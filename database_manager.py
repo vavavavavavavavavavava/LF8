@@ -18,9 +18,12 @@ class PokemonDatabaseManager:
     PokeAPI, process and store the data, and retrieve Pokémon information and highscores.
     """
 
-    def __init__(self):
+    def __init__(self, max_pokedex_number=1025):
         """
         Initializes the PokemonDatabaseManager with database configuration and API URL.
+
+        Args:
+            max_pokedex_number (int): The maximum Pokédex number to fetch from the PokeAPI.
         """
         self.db_config = {
             'host': 'localhost',
@@ -28,7 +31,8 @@ class PokemonDatabaseManager:
             'password': 'passwort',
             'database': 'pokemon_db'
         }
-        self.api_url = "https://pokeapi.co/api/v2/pokemon?limit=1025"
+        self.max_pokedex_number = max_pokedex_number
+        self.api_url = f"https://pokeapi.co/api/v2/pokemon?limit={self.max_pokedex_number}"
 
     def connect_to_database(self):
         """
@@ -295,3 +299,4 @@ class PokemonDatabaseManager:
         if result and result['highest_pokedex_number'] is not None:
             return int(result['highest_pokedex_number'])
         return 0
+    
