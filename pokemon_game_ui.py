@@ -46,7 +46,7 @@ class PokemonGameUI:
         self.name_entry = None
         self.mode_buton = None
         self.modes = None
-        self.current_mode_index = None
+        self.current_mode_index = 0
 
     def prepare_ui(self):
         """
@@ -274,26 +274,23 @@ class PokemonGameUI:
         """
         Change the game mode and update the UI based on the highest Pokédex number in the database.
         """
-        if not hasattr(self, 'modes'):
-            highest_pokedex_number = self.game.max_pokedex_number
-            generation_ranges = {
-                "Generation 1": range(1, 152),
-                "Generation 2": range(152, 252),
-                "Generation 3": range(252, 387),
-                "Generation 4": range(387, 494),
-                "Generation 5": range(494, 650),
-                "Generation 6": range(650, 722),
-                "Generation 7": range(722, 810),
-                "Generation 8": range(810, 906),
-                "Generation 9": range(906, 1025)
-            }
+        highest_pokedex_number = self.game.max_pokedex_number
+        generation_ranges = {
+            "Generation 1": range(1, 152),
+            "Generation 2": range(152, 252),
+            "Generation 3": range(252, 387),
+            "Generation 4": range(387, 494),
+            "Generation 5": range(494, 650),
+            "Generation 6": range(650, 722),
+            "Generation 7": range(722, 810),
+            "Generation 8": range(810, 906),
+            "Generation 9": range(906, 1025)
+        }
 
-            self.modes = ["All Pokemon"]
-            for gen, pokedex_range in generation_ranges.items():
-                if highest_pokedex_number >= min(pokedex_range):
-                    self.modes.append(gen)
-
-            self.current_mode_index = 0
+        self.modes = ["All Pokemon"]
+        for gen, pokedex_range in generation_ranges.items():
+            if highest_pokedex_number >= min(pokedex_range):
+                self.modes.append(gen)
 
         self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
         new_mode = self.modes[self.current_mode_index]
