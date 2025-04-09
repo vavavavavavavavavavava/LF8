@@ -90,8 +90,8 @@ class PokemonDatabaseManager:
         for y in range(height):
             for x in range(width):
                 a = pixels[x, y][3]
-                if a > 0:  # If the pixel is not transparent
-                    pixels[x, y] = (0, 0, 0, 255)  # Set the pixel to black
+                if a > 0:
+                    pixels[x, y] = (0, 0, 0, 255)
         return image
 
     def save_pokemon_batch_to_database(self, cursor, pokemon_data, batch_size=100):
@@ -137,12 +137,10 @@ class PokemonDatabaseManager:
             if img_response.status_code == 200:
                 original_image = Image.open(io.BytesIO(img_response.content))
 
-                # Save original image as BLOB
                 original_image_blob = io.BytesIO()
                 original_image.save(original_image_blob, format='PNG')
                 original_image_blob.seek(0)
 
-                # Create black image and save as BLOB
                 black_image = self.convert_to_black(original_image)
                 black_image_blob = io.BytesIO()
                 black_image.save(black_image_blob, format='PNG')
@@ -163,10 +161,8 @@ class PokemonDatabaseManager:
         with ThreadPoolExecutor(max_workers=10) as executor:
             pokemon_batch = list(executor.map(self.fetch_and_process_pokemon, data['results']))
 
-        # Filter out None values
         pokemon_batch = [p for p in pokemon_batch if p]
 
-        # Batch insert into the database
         self.save_pokemon_batch_to_database(cursor, pokemon_batch)
         print(f"{len(pokemon_batch)} Pokémon records saved.")
 
@@ -319,9 +315,7 @@ class PokemonDatabaseManager:
         if not os.path.exists(script_path):
             print(f"SQL script not found at {script_path}")
             return
-        print("script found")
 
-        # Connect to MySQL server without specifying the database
         db_config_without_db = self.db_config.copy()
         db_config_without_db.pop('database', None)
 

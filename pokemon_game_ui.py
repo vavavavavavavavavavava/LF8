@@ -30,7 +30,6 @@ class PokemonGameUI:
         self.root.title("Who's that Pokemon?")
         self.root.state('zoomed')
 
-        # Initialize UI elements
         self.logo_label = None
         self.img_label = None
         self.answer_buttons = []

@@ -24,13 +24,8 @@ class Main:
         Initializes the main application by creating the main window, 
         database manager, game logic, and user interface.
         """
-        # Hauptfenster erstellen
         self.root = tk.Tk()
-
-        # Instanz des Database Managers erstellen
-        self.db_manager = PokemonDatabaseManager(151)
-
-        # Game- und UI-Instanzen erstellen, Database Manager weitergeben
+        self.db_manager = PokemonDatabaseManager()
         self.game = PokemonGame(self.db_manager)
         self.game_ui = PokemonGameUI(self.root, self.game)
 
