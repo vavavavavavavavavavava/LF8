@@ -31,4 +31,3 @@ jobs:
     - name: Run tests with unittest
       run: |
         python -m unittest score_test.py
-        python -m unittest database_manager_test.py

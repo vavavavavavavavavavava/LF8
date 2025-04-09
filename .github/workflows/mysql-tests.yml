@@ -1,0 +1,52 @@
+name: MySQL Tests
+
+on: [push]
+
+jobs:
+  mysql-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: passwort
+          MYSQL_DATABASE: pokemon_db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: passwort
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mysql-connector-python
+        pip install pylint
+        pip install requests
+        pip install pillow
+
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          if mysql -h 127.0.0.1 -u root -proot -e "SELECT 1"; then
+            break
+          fi
+          echo "Waiting for MySQL..."
+          sleep 1
+        done
+
+    - name: Run database manager tests
+      run: |
+        python -m unittest database_manager_test.py
