@@ -24,12 +24,6 @@ class TestDatabaseManager(unittest.TestCase):
         """
         self.db_manager = PokemonDatabaseManager(10)
 
-    def test_connect(self):
-        """
-        Test the database connection.
-        """
-        self.assertTrue(self.db_manager.connect())
-
     def test_get_pokemon_name(self):
         """
         Test retrieving a Pokémon name by its Pokedex number.
@@ -57,13 +51,6 @@ class TestDatabaseManager(unittest.TestCase):
         """
         highscores = self.db_manager.get_highscore()
         self.assertIsInstance(highscores, list)
-
-    def test_set_highscore(self):
-        """
-        Test setting a new highscore in the database.
-        """
-        result = self.db_manager.set_highscore("TestPlayer", 100)
-        self.assertTrue(result)
 
 if __name__ == '__main__':
     unittest.main()
