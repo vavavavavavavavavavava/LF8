@@ -15,21 +15,24 @@ class Question:
         original_image (PIL.Image): The original Pokémon image.
         black_image (PIL.Image): The blacked-out Pokémon image.
         choices (list): A list of answer choices, including the correct answer.
+        mode (tuple): A tuple defining the range of Pokédex numbers to use (min, max).
     """
 
-    def __init__(self, pokedex_number, db_manager):
+    def __init__(self, db_manager, mode=None):
         """
         Initializes a Question instance.
 
         Args:
-            pokedex_number (int): The Pokédex number of the Pokémon.
             db_manager (PokemonDatabaseManager): The database manager instance.
+            mode (tuple, optional): A tuple defining the range of Pokédex numbers (min, max).
+                                    If None, the full range is used.
         """
-        self.pokedex_number = pokedex_number
         self.db_manager = db_manager
-        self.correct_answer = self.db_manager.get_pokemon_name(pokedex_number)
-        self.original_image = self.db_manager.get_pokemon_image(pokedex_number)
-        self.black_image = self.db_manager.get_black_image(pokedex_number)
+        self.mode = mode or (1, self.db_manager.max_pokedex_number)
+        self.pokedex_number = random.randint(self.mode[0], self.mode[1])
+        self.correct_answer = self.db_manager.get_pokemon_name(self.pokedex_number)
+        self.original_image = self.db_manager.get_pokemon_image(self.pokedex_number)
+        self.black_image = self.db_manager.get_black_image(self.pokedex_number)
         self.choices = self.generate_choices()
 
     def generate_choices(self):
@@ -42,7 +45,7 @@ class Question:
         choices = [self.correct_answer]
         while len(choices) < 4:
             choice = self.db_manager.get_pokemon_name(
-                random.randint(1, self.db_manager.max_pokedex_number)
+                random.randint(self.mode[0], self.mode[1])
             )
             if choice and choice not in choices:
                 choices.append(choice)

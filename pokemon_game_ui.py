@@ -44,6 +44,7 @@ class PokemonGameUI:
         self.score_label = None
         self.name_label = None
         self.name_entry = None
+        self.mode_buton = None
 
     def prepare_ui(self):
         """
@@ -65,6 +66,9 @@ class PokemonGameUI:
         )
         self.scoreboard_button = tk.Button(
             self.root, text="Scoreboard", command=self.scoreboard, width=15, height=2
+        )
+        self.mode_buton = tk.Button(
+            self.root, text="All Pokemon", command=self.change_mode, width=15, height=2
         )
         self.exit_button = tk.Button(
             self.root, text="Exit", command=self.exit_game, width=15, height=2
@@ -90,7 +94,8 @@ class PokemonGameUI:
         self.logo_label.grid(row=0, column=1, pady=20, sticky="nsew")
         self.start_button.grid(row=1, column=1, pady=20, sticky="nsew")
         self.scoreboard_button.grid(row=2, column=1, pady=20, sticky="nsew")
-        self.exit_button.grid(row=3, column=1, pady=20, sticky="nsew")
+        self.mode_buton.grid(row=3, column=1, pady=20, sticky="nsew")
+        self.exit_button.grid(row=4, column=1, pady=20, sticky="nsew")
 
         self.scoreboard_data.grid_forget()
         self.next_button.grid_forget()
@@ -189,6 +194,7 @@ class PokemonGameUI:
 
         self.start_button.grid_forget()
         self.scoreboard_button.grid_forget()
+        self.mode_buton.grid_forget()
         self.exit_button.grid_forget()
 
         self.logo_label.grid(row=0, column=0, pady=20, padx=20)
@@ -261,6 +267,37 @@ class PokemonGameUI:
         self.game.submit_highscore(player_name)
         self.update_scoreboard()
         self.go_to_main_menu()
+
+    def change_mode(self):
+        """
+        Change the game mode and update the UI based on the highest Pokédex number in the database.
+        """
+        if not hasattr(self, 'modes'):
+            highest_pokedex_number = self.game.max_pokedex_number
+            generation_ranges = {
+                "Generation 1": range(1, 152),
+                "Generation 2": range(152, 252),
+                "Generation 3": range(252, 387),
+                "Generation 4": range(387, 494),
+                "Generation 5": range(494, 650),
+                "Generation 6": range(650, 722),
+                "Generation 7": range(722, 810),
+                "Generation 8": range(810, 906),
+                "Generation 9": range(906, 1025)
+            }
+
+            self.modes = ["All Pokemon"]
+            for gen, pokedex_range in generation_ranges.items():
+                if highest_pokedex_number >= min(pokedex_range):
+                    self.modes.append(gen)
+
+            self.current_mode_index = 0
+
+        self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
+        new_mode = self.modes[self.current_mode_index]
+
+        self.mode_buton.config(text=new_mode)
+        self.game.change_mode(new_mode)
 
     def exit_game(self):
         """

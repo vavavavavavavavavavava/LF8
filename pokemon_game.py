@@ -7,7 +7,6 @@ Pokémon questions, tracking the player's score, and maintaining a scoreboard
 of highscores.
 """
 
-import random
 from question import Question
 from score import Score
 from scoreboard import Scoreboard
@@ -37,6 +36,7 @@ class PokemonGame:
         self.score = None
         self.correct = True
         self.scoreboard = Scoreboard(self.db_manager)
+        self.mode = (1, self.max_pokedex_number)
 
     def start_new_game(self):
         """
@@ -52,8 +52,7 @@ class PokemonGame:
         Generates a new question by selecting a random Pokémon from the Pokédex.
         The question is created using the Question class.
         """
-        pokedex_number = random.randint(1, self.max_pokedex_number)
-        self.current_question = Question(pokedex_number, self.db_manager)
+        self.current_question = Question(self.db_manager, self.mode)
 
     def get_current_question(self):
         """
@@ -117,3 +116,28 @@ class PokemonGame:
             name (str): The name of the player to associate with the highscore.
         """
         self.scoreboard.submit_highscore(name, self.score.get())
+
+    def change_mode(self, new_mode):
+        """
+        Changes the game mode based on the provided string.
+
+        Args:
+            new_mode (str): The name of the mode to switch to.
+        """
+        mode_mapping = {
+            "All Pokemon": (1, self.max_pokedex_number),
+            "Generation 1": (1, min(151, self.max_pokedex_number)),
+            "Generation 2": (152, min(251, self.max_pokedex_number)),
+            "Generation 3": (252, min(386, self.max_pokedex_number)),
+            "Generation 4": (387, min(493, self.max_pokedex_number)),
+            "Generation 5": (494, min(649, self.max_pokedex_number)),
+            "Generation 6": (650, min(721, self.max_pokedex_number)),
+            "Generation 7": (722, min(809, self.max_pokedex_number)),
+            "Generation 8": (810, min(905, self.max_pokedex_number)),
+            "Generation 9": (906, self.max_pokedex_number),
+        }
+
+        if new_mode in mode_mapping:
+            self.mode = mode_mapping[new_mode]
+        else:
+            raise ValueError(f"Invalid mode: {new_mode}")
