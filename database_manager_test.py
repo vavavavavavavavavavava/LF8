@@ -23,6 +23,7 @@ class TestDatabaseManager(unittest.TestCase):
         Set up the test case by creating an instance of PokemonDatabaseManager.
         """
         self.db_manager = PokemonDatabaseManager(10)
+        self.db_manager.fill_database()
 
     def test_get_pokemon_name(self):
         """
