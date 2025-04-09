@@ -38,25 +38,20 @@ class Main:
         """
         Starts the Tkinter main loop to run the application.
         """
-        # Tkinter-Schleife ausführen
         self.root.mainloop()
 
-    def check_database(self):
+    def prepare(self):
         """
-        Checks if the Pokémon database is filled. If not, it populates the database.
+        Prepares the game by filling the database and starting a new game.
+        This method is called before starting the main game loop.
         """
-        print("Checking database...")
-        if self.db_manager.get_highest_pokedex_number() < self.db_manager.max_pokedex_number:
-            self.db_manager.fill_database()
-        else:
-            print("Database is already filled with Pokémon data.")
+        app.db_manager.fill_database()
+        print("Starting game...")
+        app.game.start_new_game()
+        app.game_ui.prepare_ui()
 
 if __name__ == "__main__":
     print("Starting Pokémon Game...")
     app = Main()
-    print("Initializing database...")
-    app.check_database()
-    print("Starting game...")
-    app.game.start_new_game()
-    app.game_ui.prepare_ui()
+    app.prepare()
     app.run()

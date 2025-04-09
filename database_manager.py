@@ -265,8 +265,15 @@ class PokemonDatabaseManager:
         """
         Main function to populate the database with Pokémon data.
 
-        Fetches data from the PokeAPI, processes it, and stores it in the database.
+        Checks if the database is already filled. If not, fetches data from the PokeAPI,
+        processes it, and stores it in the database.
         """
+        print("Checking database...")
+        if self.get_highest_pokedex_number() >= self.max_pokedex_number:
+            print("Database is already filled with Pokémon data.")
+            return
+
+        print("Filling database with Pokémon data...")
         start_time = time.time()
 
         conn = self.connect_to_database()
@@ -299,4 +306,3 @@ class PokemonDatabaseManager:
         if result and result['highest_pokedex_number'] is not None:
             return int(result['highest_pokedex_number'])
         return 0
-    
