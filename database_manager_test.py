@@ -31,6 +31,8 @@ class TestDatabaseManager(unittest.TestCase):
         """
         pokemon_name = self.db_manager.get_pokemon_name(1)
         self.assertIsInstance(pokemon_name, str)
+        self.assertEqual(pokemon_name, "Bulbasaur")
+        self.assertNotEqual(pokemon_name, "Pikachu")
 
     def test_get_pokemon_image(self):
         """
